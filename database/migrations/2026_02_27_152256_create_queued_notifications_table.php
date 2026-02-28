@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamp('queued_at')->useCurrent();
             $table->timestamp('processed_at')->nullable();
             $table->timestamps();
-            
+
             $table->index(['staff_id', 'processed_at']);
             $table->index('referral_id');
         });

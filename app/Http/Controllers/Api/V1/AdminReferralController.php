@@ -37,22 +37,28 @@ class AdminReferralController extends Controller
      *     summary="List all referrals",
      *     description="Get a paginated list of all referrals with optional filtering",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="status", in="query", description="Filter by status", @OA\Schema(type="string", enum={"submitted", "assigned", "acknowledged", "completed", "cancelled"}, example="submitted")),
      *     @OA\Parameter(name="urgency", in="query", description="Filter by urgency level", @OA\Schema(type="string", enum={"routine", "urgent", "emergency"}, example="urgent")),
      *     @OA\Parameter(name="department", in="query", description="Filter by department name", @OA\Schema(type="string", example="cardiology")),
      *     @OA\Parameter(name="date_from", in="query", description="Filter referrals from this date (YYYY-MM-DD)", @OA\Schema(type="string", format="date", example="2024-01-01")),
      *     @OA\Parameter(name="date_to", in="query", description="Filter referrals until this date (YYYY-MM-DD)", @OA\Schema(type="string", format="date", example="2024-12-31")),
      *     @OA\Parameter(name="page", in="query", description="Page number for pagination", @OA\Schema(type="integer", example=1)),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="List of referrals retrieved successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
+     *
      *                 @OA\Items(ref="#/components/schemas/Referral")
      *             ),
+     *
      *             @OA\Property(
      *                 property="meta",
      *                 type="object",
@@ -63,13 +69,14 @@ class AdminReferralController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(response=401, description="Unauthenticated"),
      *     @OA\Response(response=403, description="Forbidden - Admin access required")
      * )
      */
     public function index(Request $request): JsonResponse
     {
-        if (!\Illuminate\Support\Facades\Gate::allows('viewAny', Referral::class)) {
+        if (! \Illuminate\Support\Facades\Gate::allows('viewAny', Referral::class)) {
             abort(403, 'This action is unauthorized.');
         }
 
@@ -89,11 +96,15 @@ class AdminReferralController extends Controller
      *     summary="View referral details",
      *     description="Get detailed information about a specific referral including patient, hospital, department, assigned staff, ICD-10 codes, audit logs, and AI triage information",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="referral", in="path", required=true, description="Referral ID", @OA\Schema(type="integer", example=123)),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Referral details retrieved successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
@@ -101,6 +112,7 @@ class AdminReferralController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(response=401, description="Unauthenticated"),
      *     @OA\Response(response=403, description="Forbidden"),
      *     @OA\Response(response=404, description="Referral not found")
@@ -108,7 +120,7 @@ class AdminReferralController extends Controller
      */
     public function show(Referral $referral): JsonResponse
     {
-        if (!\Illuminate\Support\Facades\Gate::allows('view', $referral)) {
+        if (! \Illuminate\Support\Facades\Gate::allows('view', $referral)) {
             abort(403, 'This action is unauthorized.');
         }
 
@@ -127,19 +139,26 @@ class AdminReferralController extends Controller
      *     summary="Assign referral to staff",
      *     description="Assign a referral to a specific staff member. The referral status will be updated to 'assigned' and the staff member will be notified.",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="referral", in="path", required=true, description="Referral ID", @OA\Schema(type="integer", example=123)),
+     *
      *     @OA\RequestBody(
      *         required=true,
      *         description="Assignment data",
+     *
      *         @OA\JsonContent(
      *             required={"staff_id"},
+     *
      *             @OA\Property(property="staff_id", type="integer", example=5, description="ID of the staff member to assign the referral to")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Referral assigned successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Referral assigned successfully"),
      *             @OA\Property(
@@ -158,13 +177,16 @@ class AdminReferralController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(response=401, description="Unauthenticated"),
      *     @OA\Response(response=403, description="Forbidden"),
      *     @OA\Response(response=404, description="Referral or staff member not found"),
      *     @OA\Response(
      *         response=422,
      *         description="Validation error",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="The staff_id field is required."),
      *             @OA\Property(
      *                 property="errors",
@@ -172,6 +194,7 @@ class AdminReferralController extends Controller
      *                 @OA\Property(
      *                     property="staff_id",
      *                     type="array",
+     *
      *                     @OA\Items(type="string", example="The staff_id field is required.")
      *                 )
      *             )
@@ -230,19 +253,26 @@ class AdminReferralController extends Controller
      *     summary="Cancel a referral",
      *     description="Cancel a referral that has not been completed. The cancellation reason is required and will be logged in the audit trail.",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="referral", in="path", required=true, description="Referral ID", @OA\Schema(type="integer", example=123)),
+     *
      *     @OA\RequestBody(
      *         required=true,
      *         description="Cancellation data",
+     *
      *         @OA\JsonContent(
      *             required={"reason"},
+     *
      *             @OA\Property(property="reason", type="string", example="Patient cancelled appointment", description="Reason for cancellation")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Referral cancelled successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Referral cancelled successfully"),
      *             @OA\Property(
@@ -254,14 +284,18 @@ class AdminReferralController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=422,
      *         description="Validation error or cannot cancel",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Cannot cancel a completed referral")
      *         )
      *     ),
+     *
      *     @OA\Response(response=401, description="Unauthenticated"),
      *     @OA\Response(response=403, description="Forbidden"),
      *     @OA\Response(response=404, description="Referral not found")
@@ -269,7 +303,7 @@ class AdminReferralController extends Controller
      */
     public function cancel(CancelReferralRequest $request, Referral $referral): JsonResponse
     {
-        if (!$referral->canBeCancelled()) {
+        if (! $referral->canBeCancelled()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Cannot cancel a completed referral',

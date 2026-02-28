@@ -31,9 +31,11 @@ class AdminStaffController extends Controller
      *     tags={"Admin"},
      *     summary="List all staff",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="role", in="query", @OA\Schema(type="string")),
      *     @OA\Parameter(name="department", in="query", @OA\Schema(type="string")),
      *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer")),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -65,7 +67,9 @@ class AdminStaffController extends Controller
      *     tags={"Admin"},
      *     summary="View staff details",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -87,10 +91,13 @@ class AdminStaffController extends Controller
      *     tags={"Admin"},
      *     summary="Create a new staff member",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"name", "email", "role", "password"},
+     *
      *             @OA\Property(property="name", type="string"),
      *             @OA\Property(property="email", type="string"),
      *             @OA\Property(property="role", type="string", enum={"admin", "doctor", "coordinator"}),
@@ -99,6 +106,7 @@ class AdminStaffController extends Controller
      *             @OA\Property(property="is_available", type="boolean")
      *         )
      *     ),
+     *
      *     @OA\Response(response=201, description="Created")
      * )
      */
@@ -138,10 +146,14 @@ class AdminStaffController extends Controller
      *     tags={"Admin"},
      *     summary="Update a staff member",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="name", type="string"),
      *             @OA\Property(property="email", type="string"),
      *             @OA\Property(property="role", type="string", enum={"admin", "doctor", "coordinator"}),
@@ -150,6 +162,7 @@ class AdminStaffController extends Controller
      *             @OA\Property(property="is_available", type="boolean")
      *         )
      *     ),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -183,7 +196,7 @@ class AdminStaffController extends Controller
             'role' => $validated['role'] ?? null,
             'department' => $validated['department'] ?? null,
             'is_available' => $validated['is_available'] ?? null,
-        ], fn($value) => $value !== null);
+        ], fn ($value) => $value !== null);
 
         $staff->update($staffData);
 
@@ -200,7 +213,9 @@ class AdminStaffController extends Controller
      *     tags={"Admin"},
      *     summary="Delete a staff member",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -217,7 +232,7 @@ class AdminStaffController extends Controller
 
         $userId = $staff->user_id;
         $staff->delete();
-        
+
         // Delete associated user
         User::find($userId)?->delete();
 
@@ -234,14 +249,19 @@ class AdminStaffController extends Controller
      *     tags={"Admin"},
      *     summary="Assign role to user",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="user", in="path", required=true, @OA\Schema(type="integer")),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"role_id"},
+     *
      *             @OA\Property(property="role_id", type="integer")
      *         )
      *     ),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -264,14 +284,19 @@ class AdminStaffController extends Controller
      *     tags={"Admin"},
      *     summary="Assign permission to user",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="user", in="path", required=true, @OA\Schema(type="integer")),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"permission_id"},
+     *
      *             @OA\Property(property="permission_id", type="integer")
      *         )
      *     ),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -287,4 +312,3 @@ class AdminStaffController extends Controller
         ]);
     }
 }
-

@@ -18,12 +18,11 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'roles' => $this->whenLoaded('roles', fn() => $this->roles->map(fn($role) => [
+            'roles' => $this->whenLoaded('roles', fn () => $this->roles->map(fn ($role) => [
                 'id' => $role->id,
                 'name' => $role->name,
             ])),
-            'permissions' => $this->whenLoaded('permissions', fn() => $this->permissions->pluck('name')),
+            'permissions' => $this->whenLoaded('permissions', fn () => $this->permissions->pluck('name')),
         ];
     }
 }
-

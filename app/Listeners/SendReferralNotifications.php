@@ -9,8 +9,7 @@ class SendReferralNotifications
 {
     public function __construct(
         private NotificationService $notificationService
-    ) {
-    }
+    ) {}
 
     public function handle(ReferralTriaged $event): void
     {

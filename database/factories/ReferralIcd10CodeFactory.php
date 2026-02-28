@@ -25,7 +25,7 @@ class ReferralIcd10CodeFactory extends Factory
             'F32', // Major depressive disorder
             'N18', // Chronic kidney disease
         ];
-        
+
         return [
             'referral_id' => Referral::factory(),
             'code' => $this->faker->randomElement($icd10Codes),

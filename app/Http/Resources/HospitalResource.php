@@ -15,15 +15,15 @@ class HospitalResource extends JsonResource
     public function toArray(Request $request): array
     {
         // Handle case where resource might not be a model (e.g., string or null)
-        if (!$this->resource || !is_object($this->resource)) {
+        if (! $this->resource || ! is_object($this->resource)) {
             return [];
         }
-        
+
         // Make API key visible for admin resources
         if (method_exists($this->resource, 'makeVisible')) {
             $this->resource->makeVisible('api_key');
         }
-        
+
         return [
             'id' => $this->id ?? null,
             'name' => $this->name ?? null,
@@ -37,4 +37,3 @@ class HospitalResource extends JsonResource
         ];
     }
 }
-

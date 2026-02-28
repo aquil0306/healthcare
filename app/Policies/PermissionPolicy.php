@@ -32,4 +32,3 @@ class PermissionPolicy
         return $user->isAdmin() || $user->can('permissions.delete');
     }
 }
-

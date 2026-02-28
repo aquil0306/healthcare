@@ -26,8 +26,7 @@ class PatientResource extends JsonResource
             'created_at_raw' => $this->created_at->toIso8601String(),
             'updated_at' => $this->updated_at->diffForHumans(),
             'updated_at_raw' => $this->updated_at->toIso8601String(),
-            'referrals' => $this->whenLoaded('referrals', fn() => ReferralResource::collection($this->referrals)),
+            'referrals' => $this->whenLoaded('referrals', fn () => ReferralResource::collection($this->referrals)),
         ];
     }
 }
-

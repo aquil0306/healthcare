@@ -40,7 +40,7 @@ class ReferralPolicy
 
     public function cancel(User $user, Referral $referral): bool
     {
-        if (!$user->isAdmin()) {
+        if (! $user->isAdmin()) {
             return false;
         }
 

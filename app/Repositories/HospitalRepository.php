@@ -27,4 +27,3 @@ class HospitalRepository extends BaseRepository
         return Str::random(64);
     }
 }
-

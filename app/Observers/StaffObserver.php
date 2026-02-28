@@ -9,8 +9,7 @@ class StaffObserver
 {
     public function __construct(
         private NotificationService $notificationService
-    ) {
-    }
+    ) {}
 
     /**
      * Handle the Staff "updated" event.
@@ -25,4 +24,3 @@ class StaffObserver
         }
     }
 }
-

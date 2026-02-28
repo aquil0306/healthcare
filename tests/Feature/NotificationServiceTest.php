@@ -2,10 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Events\ReferralTriaged;
 use App\Models\Referral;
 use App\Models\Staff;
-use App\Models\User;
 use App\Services\NotificationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
@@ -155,4 +153,3 @@ class NotificationServiceTest extends TestCase
         Queue::assertNotPushed(\App\Jobs\SendSmsNotification::class);
     }
 }
-

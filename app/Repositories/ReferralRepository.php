@@ -66,10 +66,10 @@ class ReferralRepository extends BaseRepository
                 // Check from processed_at (when triaged) if available, otherwise from created_at
                 $query->where(function ($q) use ($minutes) {
                     $q->whereNotNull('processed_at')
-                      ->where('processed_at', '<=', now()->subMinutes($minutes));
+                        ->where('processed_at', '<=', now()->subMinutes($minutes));
                 })->orWhere(function ($q) use ($minutes) {
                     $q->whereNull('processed_at')
-                      ->where('created_at', '<=', now()->subMinutes($minutes));
+                        ->where('created_at', '<=', now()->subMinutes($minutes));
                 });
             })
             // Exclude already escalated referrals (check audit logs)
@@ -78,4 +78,3 @@ class ReferralRepository extends BaseRepository
             });
     }
 }
-

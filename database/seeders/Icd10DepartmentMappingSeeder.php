@@ -10,7 +10,7 @@ class Icd10DepartmentMappingSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * 
+     *
      * This seeder creates mappings between ICD-10 codes and departments.
      * You can customize these mappings based on your hospital's structure.
      */
@@ -23,8 +23,9 @@ class Icd10DepartmentMappingSeeder extends Seeder
         $general = Department::where('code', 'GEN')->orWhere('name', 'like', '%general%')->first();
         $emergency = Department::where('code', 'ER')->orWhere('name', 'like', '%emergency%')->first();
 
-        if (!$cardiology || !$neurology || !$orthopedics || !$general) {
+        if (! $cardiology || ! $neurology || ! $orthopedics || ! $general) {
             $this->command->warn('Required departments not found. Please run DepartmentSeeder first.');
+
             return;
         }
 
@@ -32,7 +33,7 @@ class Icd10DepartmentMappingSeeder extends Seeder
         $cardiacCodes = Icd10Code::where('code', 'like', 'I%')
             ->orWhere('category', 'like', 'I%')
             ->get();
-        
+
         foreach ($cardiacCodes as $code) {
             $code->departments()->syncWithoutDetaching([
                 $cardiology->id => [
@@ -46,7 +47,7 @@ class Icd10DepartmentMappingSeeder extends Seeder
         $neuroCodes = Icd10Code::where('code', 'like', 'G%')
             ->orWhere('category', 'like', 'G%')
             ->get();
-        
+
         foreach ($neuroCodes as $code) {
             $code->departments()->syncWithoutDetaching([
                 $neurology->id => [
@@ -60,7 +61,7 @@ class Icd10DepartmentMappingSeeder extends Seeder
         $orthoCodes = Icd10Code::where('code', 'like', 'M%')
             ->orWhere('category', 'like', 'M%')
             ->get();
-        
+
         foreach ($orthoCodes as $code) {
             $code->departments()->syncWithoutDetaching([
                 $orthopedics->id => [
@@ -89,7 +90,6 @@ class Icd10DepartmentMappingSeeder extends Seeder
         }
 
         $this->command->info('ICD-10 code to department mappings created successfully!');
-        $this->command->info('Total mappings: ' . \DB::table('icd10_code_department')->count());
+        $this->command->info('Total mappings: '.\DB::table('icd10_code_department')->count());
     }
 }
-

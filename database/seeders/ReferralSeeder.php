@@ -21,12 +21,12 @@ class ReferralSeeder extends Seeder
         // Fallback to codes if no ICD-10 codes exist in database yet
         if ($icd10Codes->isEmpty()) {
             $codeStrings = ['I10', 'I20', 'I50', 'G93', 'M25', 'K59', 'J44', 'E11', 'F32', 'N18'];
-            
+
             foreach ($referrals as $referral) {
                 $codeCount = rand(1, 3);
                 $selectedCodes = array_rand(array_flip($codeStrings), $codeCount);
-                
-                if (!is_array($selectedCodes)) {
+
+                if (! is_array($selectedCodes)) {
                     $selectedCodes = [$selectedCodes];
                 }
 
@@ -44,7 +44,7 @@ class ReferralSeeder extends Seeder
                 $selectedCodes = $icd10Codes->random($codeCount);
 
                 // Ensure it's always a collection
-                if (!($selectedCodes instanceof \Illuminate\Support\Collection)) {
+                if (! ($selectedCodes instanceof \Illuminate\Support\Collection)) {
                     $selectedCodes = collect([$selectedCodes]);
                 }
 

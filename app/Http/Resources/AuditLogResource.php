@@ -25,8 +25,8 @@ class AuditLogResource extends JsonResource
             'metadata' => $this->metadata,
             'created_at' => $this->created_at->diffForHumans(),
             'created_at_raw' => $this->created_at->toIso8601String(),
-            'user' => $this->whenLoaded('user', fn() => new UserResource($this->user)),
-            'referral' => $this->whenLoaded('referral', fn() => [
+            'user' => $this->whenLoaded('user', fn () => new UserResource($this->user)),
+            'referral' => $this->whenLoaded('referral', fn () => [
                 'id' => $this->referral->id,
                 'patient_id' => $this->referral->patient_id,
                 'hospital_id' => $this->referral->hospital_id,
@@ -36,4 +36,3 @@ class AuditLogResource extends JsonResource
         ];
     }
 }
-

@@ -15,7 +15,7 @@ class AuditLogFactory extends Factory
     {
         $actions = ['created', 'updated', 'status_changed', 'assigned', 'cancelled', 'acknowledged'];
         $action = $this->faker->randomElement($actions);
-        
+
         return [
             'referral_id' => Referral::factory(),
             'user_id' => User::factory(),

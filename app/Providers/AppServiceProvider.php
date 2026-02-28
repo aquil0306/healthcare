@@ -4,16 +4,16 @@ namespace App\Providers;
 
 use App\Events\ReferralTriaged;
 use App\Listeners\SendReferralNotifications;
-use App\Observers\StaffObserver;
-use App\Repositories\HospitalRepository;
-use App\Repositories\PatientRepository;
-use App\Repositories\ReferralRepository;
-use App\Repositories\StaffRepository;
 use App\Models\Hospital;
 use App\Models\Patient;
 use App\Models\Referral;
 use App\Models\Staff;
 use App\Models\User;
+use App\Observers\StaffObserver;
+use App\Repositories\HospitalRepository;
+use App\Repositories\PatientRepository;
+use App\Repositories\ReferralRepository;
+use App\Repositories\StaffRepository;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -24,19 +24,19 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register repositories
         $this->app->singleton(HospitalRepository::class, function ($app) {
-            return new HospitalRepository(new Hospital());
+            return new HospitalRepository(new Hospital);
         });
 
         $this->app->singleton(PatientRepository::class, function ($app) {
-            return new PatientRepository(new Patient());
+            return new PatientRepository(new Patient);
         });
 
         $this->app->singleton(ReferralRepository::class, function ($app) {
-            return new ReferralRepository(new Referral());
+            return new ReferralRepository(new Referral);
         });
 
         $this->app->singleton(StaffRepository::class, function ($app) {
-            return new StaffRepository(new Staff());
+            return new StaffRepository(new Staff);
         });
     }
 

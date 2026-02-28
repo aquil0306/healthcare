@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Models\Referral;
-use App\Models\Patient;
 use App\Models\Hospital;
+use App\Models\Patient;
+use App\Models\Referral;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ReferralFactory extends Factory

@@ -14,7 +14,7 @@ class AdminNotificationController extends Controller
     public function index(Request $request): JsonResponse
     {
         // Only admins can view all notifications
-        if (!Gate::allows('viewAny', Notification::class)) {
+        if (! Gate::allows('viewAny', Notification::class)) {
             abort(403, 'This action is unauthorized.');
         }
 
@@ -73,7 +73,7 @@ class AdminNotificationController extends Controller
 
     public function show(Notification $notification): JsonResponse
     {
-        if (!Gate::allows('view', $notification)) {
+        if (! Gate::allows('view', $notification)) {
             abort(403, 'This action is unauthorized.');
         }
 

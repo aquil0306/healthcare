@@ -23,8 +23,7 @@ class HospitalReferralController extends Controller
         private ReferralRepository $referralRepository,
         private AiTriageService $aiTriageService,
         private AuditService $auditService
-    ) {
-    }
+    ) {}
 
     /**
      * @OA\Post(
@@ -34,11 +33,14 @@ class HospitalReferralController extends Controller
      *     summary="Submit a new referral",
      *     description="Submit a new patient referral. The system will automatically triage the referral using AI and assign it to the appropriate department.",
      *     security={{"apiKey": {}}},
+     *
      *     @OA\RequestBody(
      *         required=true,
      *         description="Referral submission data",
+     *
      *         @OA\JsonContent(
      *             required={"patient", "urgency", "diagnosis_codes", "clinical_notes"},
+     *
      *             @OA\Property(
      *                 property="patient",
      *                 type="object",
@@ -56,16 +58,21 @@ class HospitalReferralController extends Controller
      *                 type="array",
      *                 minItems=1,
      *                 description="Array of ICD-10 diagnosis codes",
+     *
      *                 @OA\Items(type="string", maxLength=20, example="I10", description="ICD-10 code")
      *             ),
+     *
      *             @OA\Property(property="clinical_notes", type="string", example="Patient presents with chest pain and shortness of breath. Requires immediate cardiology consultation.", description="Clinical notes and observations"),
      *             @OA\Property(property="external_referral_id", type="string", maxLength=255, example="EXT-2024-001234", description="External referral ID from the hospital system (optional, used for duplicate detection)")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=201,
      *         description="Referral created successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Referral submitted successfully"),
      *             @OA\Property(
@@ -76,19 +83,25 @@ class HospitalReferralController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=409,
      *         description="Duplicate referral",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Duplicate referral already exists"),
      *             @OA\Property(property="referral_id", type="integer", example=100, description="ID of the existing referral")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=422,
      *         description="Validation error",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="The patient.first_name field is required."),
      *             @OA\Property(
      *                 property="errors",
@@ -96,15 +109,19 @@ class HospitalReferralController extends Controller
      *                 @OA\Property(
      *                     property="patient.first_name",
      *                     type="array",
+     *
      *                     @OA\Items(type="string", example="The patient.first_name field is required.")
      *                 )
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthorized - Invalid or missing API key",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Unauthorized")
      *         )
      *     )

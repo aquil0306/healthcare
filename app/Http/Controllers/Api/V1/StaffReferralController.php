@@ -22,8 +22,7 @@ class StaffReferralController extends Controller
     public function __construct(
         private ReferralRepository $referralRepository,
         private AuditService $auditService
-    ) {
-    }
+    ) {}
 
     /**
      * @OA\Get(
@@ -33,18 +32,23 @@ class StaffReferralController extends Controller
      *     summary="List referrals assigned to staff",
      *     description="Get a list of all referrals assigned to the currently authenticated staff member",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="List of assigned referrals retrieved successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
+     *
      *                 @OA\Items(ref="#/components/schemas/Referral")
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(response=401, description="Unauthenticated"),
      *     @OA\Response(response=403, description="Forbidden - Staff access required")
      * )
@@ -70,11 +74,15 @@ class StaffReferralController extends Controller
      *     summary="Acknowledge a referral",
      *     description="Acknowledge a referral assigned to the current staff member. The referral status will be updated to 'acknowledged' and the acknowledgment timestamp will be recorded.",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, description="Referral ID", @OA\Schema(type="integer", example=123)),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Referral acknowledged successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Referral acknowledged"),
      *             @OA\Property(
@@ -86,14 +94,18 @@ class StaffReferralController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=403,
      *         description="Forbidden - Referral not assigned to this staff member",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Unauthorized")
      *         )
      *     ),
+     *
      *     @OA\Response(response=401, description="Unauthenticated"),
      *     @OA\Response(response=404, description="Referral not found")
      * )
@@ -141,15 +153,20 @@ class StaffReferralController extends Controller
      *     summary="View referral details",
      *     description="Get detailed information about a specific referral assigned to the current staff member",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, description="Referral ID", @OA\Schema(type="integer", example=123)),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Referral details retrieved successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="data", ref="#/components/schemas/Referral")
      *         )
      *     ),
+     *
      *     @OA\Response(response=401, description="Unauthenticated"),
      *     @OA\Response(response=403, description="Forbidden - Referral not assigned to this staff member"),
      *     @OA\Response(response=404, description="Referral not found")
@@ -182,16 +199,21 @@ class StaffReferralController extends Controller
      *     summary="Mark referral as complete",
      *     description="Mark a referral assigned to the current staff member as completed",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, description="Referral ID", @OA\Schema(type="integer", example=123)),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Referral marked as complete",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Referral marked as complete"),
      *             @OA\Property(property="data", ref="#/components/schemas/Referral")
      *         )
      *     ),
+     *
      *     @OA\Response(response=401, description="Unauthenticated"),
      *     @OA\Response(response=403, description="Forbidden - Referral not assigned to this staff member"),
      *     @OA\Response(response=404, description="Referral not found")
@@ -246,23 +268,31 @@ class StaffReferralController extends Controller
      *     summary="Update referral status",
      *     description="Update the status of a referral assigned to the current staff member",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, description="Referral ID", @OA\Schema(type="integer", example=123)),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"status"},
+     *
      *             @OA\Property(property="status", type="string", enum={"acknowledged", "in_progress", "completed"}, example="in_progress")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Referral status updated successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Referral status updated"),
      *             @OA\Property(property="data", ref="#/components/schemas/Referral")
      *         )
      *     ),
+     *
      *     @OA\Response(response=401, description="Unauthenticated"),
      *     @OA\Response(response=403, description="Forbidden - Referral not assigned to this staff member"),
      *     @OA\Response(response=404, description="Referral not found"),
@@ -306,7 +336,7 @@ class StaffReferralController extends Controller
         $updateData = ['status' => $newStatus];
 
         // Set acknowledged_at if status is acknowledged
-        if ($newStatus === 'acknowledged' && !$referral->acknowledged_at) {
+        if ($newStatus === 'acknowledged' && ! $referral->acknowledged_at) {
             $updateData['acknowledged_at'] = now();
         }
 

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('category_description')->nullable(); // Category description
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-            
+
             $table->index('code');
             $table->index('category');
             $table->index('is_active');

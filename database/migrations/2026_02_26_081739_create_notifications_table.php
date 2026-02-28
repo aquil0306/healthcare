@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamp('read_at')->nullable();
             $table->string('type')->default('referral'); // referral, escalation, etc.
             $table->timestamps();
-            
+
             $table->index('staff_id');
             $table->index('referral_id');
             $table->index('read_at');

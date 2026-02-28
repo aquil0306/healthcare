@@ -16,8 +16,7 @@ class SendEmailNotification implements ShouldQueue
         public User $user,
         public Referral $referral,
         public string $message
-    ) {
-    }
+    ) {}
 
     public function handle(): void
     {

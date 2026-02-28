@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Hospital extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'name',
         'code',

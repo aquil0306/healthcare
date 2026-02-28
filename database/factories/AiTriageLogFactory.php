@@ -13,7 +13,7 @@ class AiTriageLogFactory extends Factory
     public function definition(): array
     {
         $status = $this->faker->randomElement(['success', 'failed', 'retrying']);
-        
+
         return [
             'referral_id' => Referral::factory(),
             'input_data' => [

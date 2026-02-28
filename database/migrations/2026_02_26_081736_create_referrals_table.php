@@ -26,7 +26,7 @@ return new class extends Migration
             $table->timestamp('acknowledged_at')->nullable();
             $table->string('external_referral_id')->nullable(); // For duplicate detection
             $table->timestamps();
-            
+
             $table->index(['hospital_id', 'external_referral_id']);
             $table->index('status');
             $table->index('urgency');

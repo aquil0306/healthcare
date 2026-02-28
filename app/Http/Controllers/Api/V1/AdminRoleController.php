@@ -25,7 +25,9 @@ class AdminRoleController extends Controller
      *     tags={"Admin"},
      *     summary="List all roles",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer")),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -35,7 +37,8 @@ class AdminRoleController extends Controller
         $roles = Role::with('permissions')
             ->withCount('users')
             ->orderBy('name')
-            ->paginate(15); 
+            ->paginate(15);
+
         return response()->json([
             'success' => true,
             'data' => $roles,
@@ -49,7 +52,9 @@ class AdminRoleController extends Controller
      *     tags={"Admin"},
      *     summary="View role details",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -71,14 +76,18 @@ class AdminRoleController extends Controller
      *     tags={"Admin"},
      *     summary="Create a new role",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"name"},
+     *
      *             @OA\Property(property="name", type="string"),
      *             @OA\Property(property="permissions", type="array", @OA\Items(type="integer"))
      *         )
      *     ),
+     *
      *     @OA\Response(response=201, description="Created")
      * )
      */
@@ -110,14 +119,19 @@ class AdminRoleController extends Controller
      *     tags={"Admin"},
      *     summary="Update a role",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="name", type="string"),
      *             @OA\Property(property="permissions", type="array", @OA\Items(type="integer"))
      *         )
      *     ),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -151,7 +165,9 @@ class AdminRoleController extends Controller
      *     tags={"Admin"},
      *     summary="Delete a role",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -173,4 +189,3 @@ class AdminRoleController extends Controller
         ]);
     }
 }
-

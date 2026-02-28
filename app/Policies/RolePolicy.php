@@ -32,4 +32,3 @@ class RolePolicy
         return $user->isAdmin() || $user->can('roles.delete');
     }
 }
-

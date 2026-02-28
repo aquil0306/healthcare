@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ReferralIcd10Code extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'referral_id',
         'icd10_code_id',

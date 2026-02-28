@@ -25,8 +25,10 @@ class AdminPatientController extends Controller
      *     tags={"Admin"},
      *     summary="List all patients",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="search", in="query", @OA\Schema(type="string")),
      *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer")),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -36,7 +38,7 @@ class AdminPatientController extends Controller
 
         $query = Patient::query();
 
-        if ($request->has('search') && !empty($request->search)) {
+        if ($request->has('search') && ! empty($request->search)) {
             $search = strtolower($request->search);
             // Since encrypted fields can't be searched efficiently in SQL,
             // we'll load all patients and filter in memory
@@ -48,13 +50,13 @@ class AdminPatientController extends Controller
                        str_contains(strtolower($patient->national_id), $search) ||
                        str_contains(strtolower($patient->insurance_number), $search);
             });
-            
+
             // Manual pagination
             $page = $request->input('page', 1);
             $perPage = 15;
             $total = $filtered->count();
             $items = $filtered->slice(($page - 1) * $perPage, $perPage)->values();
-            
+
             $paginated = new \Illuminate\Pagination\LengthAwarePaginator(
                 PatientResource::collection($items),
                 $total,
@@ -62,7 +64,7 @@ class AdminPatientController extends Controller
                 $page,
                 ['path' => $request->url(), 'query' => $request->query()]
             );
-            
+
             return PatientResource::collection($paginated)->additional([
                 'success' => true,
             ])->response();
@@ -82,7 +84,9 @@ class AdminPatientController extends Controller
      *     tags={"Admin"},
      *     summary="View patient details",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -104,10 +108,13 @@ class AdminPatientController extends Controller
      *     tags={"Admin"},
      *     summary="Create a new patient",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"first_name", "last_name", "date_of_birth", "national_id", "insurance_number"},
+     *
      *             @OA\Property(property="first_name", type="string"),
      *             @OA\Property(property="last_name", type="string"),
      *             @OA\Property(property="date_of_birth", type="string", format="date"),
@@ -115,6 +122,7 @@ class AdminPatientController extends Controller
      *             @OA\Property(property="insurance_number", type="string")
      *         )
      *     ),
+     *
      *     @OA\Response(response=201, description="Created")
      * )
      */
@@ -135,10 +143,14 @@ class AdminPatientController extends Controller
      *     tags={"Admin"},
      *     summary="Update a patient",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="first_name", type="string"),
      *             @OA\Property(property="last_name", type="string"),
      *             @OA\Property(property="date_of_birth", type="string", format="date"),
@@ -146,6 +158,7 @@ class AdminPatientController extends Controller
      *             @OA\Property(property="insurance_number", type="string")
      *         )
      *     ),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -166,7 +179,9 @@ class AdminPatientController extends Controller
      *     tags={"Admin"},
      *     summary="Delete a patient",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -189,4 +204,3 @@ class AdminPatientController extends Controller
         ]);
     }
 }
-

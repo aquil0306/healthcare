@@ -19,9 +19,8 @@ class UpdatePatientRequest extends FormRequest
             'first_name' => 'sometimes|string|max:255',
             'last_name' => 'sometimes|string|max:255',
             'date_of_birth' => 'sometimes|date|before:today',
-            'national_id' => ['sometimes', 'string', 'max:255', 'unique:patients,national_id,' . $patient->id],
+            'national_id' => ['sometimes', 'string', 'max:255', 'unique:patients,national_id,'.$patient->id],
             'insurance_number' => 'sometimes|string|max:255',
         ];
     }
 }
-

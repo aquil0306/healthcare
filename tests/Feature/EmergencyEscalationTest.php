@@ -4,10 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\Referral;
 use App\Models\Staff;
-use App\Models\User;
 use App\Repositories\ReferralRepository;
 use App\Services\EscalationService;
-use App\Services\NotificationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
@@ -18,6 +16,7 @@ class EmergencyEscalationTest extends TestCase
     use RefreshDatabase;
 
     private EscalationService $escalationService;
+
     private ReferralRepository $referralRepository;
 
     protected function setUp(): void
@@ -124,4 +123,3 @@ class EmergencyEscalationTest extends TestCase
         $this->assertStringContainsString('2 minutes', $auditLog->metadata['reason']);
     }
 }
-

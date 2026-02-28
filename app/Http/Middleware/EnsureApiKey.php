@@ -11,14 +11,13 @@ class EnsureApiKey
 {
     public function __construct(
         private HospitalRepository $hospitalRepository
-    ) {
-    }
+    ) {}
 
     public function handle(Request $request, Closure $next): Response
     {
         $apiKey = $request->header('X-API-Key') ?? $request->input('api_key');
 
-        if (!$apiKey) {
+        if (! $apiKey) {
             return response()->json([
                 'success' => false,
                 'message' => 'API key is required',
@@ -27,7 +26,7 @@ class EnsureApiKey
 
         $hospital = $this->hospitalRepository->findByApiKey($apiKey);
 
-        if (!$hospital || !$hospital->isActive()) {
+        if (! $hospital || ! $hospital->isActive()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid or inactive API key',

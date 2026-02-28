@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Crypt;
 class Patient extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'first_name',
         'last_name',

@@ -24,4 +24,3 @@ class StoreStaffRequest extends FormRequest
         ];
     }
 }
-

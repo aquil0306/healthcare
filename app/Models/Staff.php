@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Staff extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'name',

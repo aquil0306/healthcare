@@ -4,13 +4,14 @@ namespace App\Services;
 
 use App\Models\Referral;
 use App\Repositories\ReferralRepository;
-use App\Services\NotificationService;
 use Illuminate\Support\Facades\Log;
 
 class EscalationService
 {
     private ReferralRepository $referralRepository;
+
     private NotificationService $notificationService;
+
     private int $escalationMinutes = 2;
 
     public function __construct(
@@ -29,10 +30,10 @@ class EscalationService
 
         foreach ($emergencyReferrals as $referral) {
             // Double-check to prevent race conditions
-            if ($referral->acknowledged_at === null && 
-                $referral->status !== 'completed' && 
+            if ($referral->acknowledged_at === null &&
+                $referral->status !== 'completed' &&
                 $referral->status !== 'cancelled' &&
-                !$referral->auditLogs()->where('action', 'escalated')->exists()) {
+                ! $referral->auditLogs()->where('action', 'escalated')->exists()) {
                 $this->escalate($referral);
             }
         }
@@ -59,4 +60,3 @@ class EscalationService
         ]);
     }
 }
-

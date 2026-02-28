@@ -34,14 +34,13 @@ class ReferralResource extends JsonResource
             'created_at_raw' => $this->created_at->toIso8601String(),
             'updated_at' => $this->updated_at->diffForHumans(),
             'updated_at_raw' => $this->updated_at->toIso8601String(),
-            'patient' => $this->whenLoaded('patient', fn() => $this->patient ? new PatientResource($this->patient) : null),
-            'hospital' => $this->whenLoaded('hospital', fn() => $this->hospital && is_object($this->hospital) ? new HospitalResource($this->hospital) : null),
-            'department_resource' => $this->whenLoaded('department', fn() => $this->department && is_object($this->department) ? new DepartmentResource($this->department) : null),
-            'assigned_staff' => $this->whenLoaded('assignedStaff', fn() => $this->assignedStaff ? new StaffResource($this->assignedStaff) : null),
-            'icd10_codes' => $this->whenLoaded('icd10Codes', fn() => ReferralIcd10CodeResource::collection($this->icd10Codes)),
-            'audit_logs' => $this->whenLoaded('auditLogs', fn() => AuditLogResource::collection($this->auditLogs)),
-            'ai_triage_log' => $this->whenLoaded('aiTriageLog', fn() => new AiTriageLogResource($this->aiTriageLog)),
+            'patient' => $this->whenLoaded('patient', fn () => $this->patient ? new PatientResource($this->patient) : null),
+            'hospital' => $this->whenLoaded('hospital', fn () => $this->hospital && is_object($this->hospital) ? new HospitalResource($this->hospital) : null),
+            'department_resource' => $this->whenLoaded('department', fn () => $this->department && is_object($this->department) ? new DepartmentResource($this->department) : null),
+            'assigned_staff' => $this->whenLoaded('assignedStaff', fn () => $this->assignedStaff ? new StaffResource($this->assignedStaff) : null),
+            'icd10_codes' => $this->whenLoaded('icd10Codes', fn () => ReferralIcd10CodeResource::collection($this->icd10Codes)),
+            'audit_logs' => $this->whenLoaded('auditLogs', fn () => AuditLogResource::collection($this->auditLogs)),
+            'ai_triage_log' => $this->whenLoaded('aiTriageLog', fn () => new AiTriageLogResource($this->aiTriageLog)),
         ];
     }
 }
-

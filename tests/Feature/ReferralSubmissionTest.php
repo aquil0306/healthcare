@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Hospital;
-use App\Repositories\HospitalRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

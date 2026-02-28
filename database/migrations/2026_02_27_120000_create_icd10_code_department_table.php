@@ -19,10 +19,10 @@ return new class extends Migration
             $table->boolean('is_primary')->default(false)->comment('Is this the primary department for this code?');
             $table->text('notes')->nullable()->comment('Optional notes about this mapping');
             $table->timestamps();
-            
+
             // Ensure unique combination of code and department
             $table->unique(['icd10_code_id', 'department_id']);
-            
+
             // Indexes for performance
             $table->index('icd10_code_id');
             $table->index('department_id');
@@ -39,4 +39,3 @@ return new class extends Migration
         Schema::dropIfExists('icd10_code_department');
     }
 };
-

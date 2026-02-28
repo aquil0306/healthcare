@@ -38,7 +38,7 @@ class PatientDeduplicationTest extends TestCase
         // Should return existing patient, not create new one
         $this->assertEquals($existingPatient->id, $result->id);
         $this->assertEquals($existingPatient->national_id, $result->national_id);
-        
+
         // Verify only one patient exists with this national ID
         $this->assertEquals(1, Patient::where('id', $existingPatient->id)->count());
     }
@@ -60,7 +60,7 @@ class PatientDeduplicationTest extends TestCase
         $this->assertEquals('Jane', $result->first_name);
         $this->assertEquals('Smith', $result->last_name);
         $this->assertEquals('987654321', $result->national_id);
-        
+
         // Verify patient was created in database
         $this->assertDatabaseHas('patients', [
             'id' => $result->id,
@@ -78,12 +78,12 @@ class PatientDeduplicationTest extends TestCase
 
         // Check raw database value is encrypted (not plaintext)
         $rawPatient = \DB::table('patients')->where('id', $patient->id)->first();
-        
+
         $this->assertNotEquals('Encrypted', $rawPatient->first_name);
         $this->assertNotEquals('Test', $rawPatient->last_name);
         $this->assertNotEquals('ENCRYPT123', $rawPatient->national_id);
         $this->assertNotEquals('INS456', $rawPatient->insurance_number);
-        
+
         // But model accessor decrypts it
         $this->assertEquals('Encrypted', $patient->first_name);
         $this->assertEquals('Test', $patient->last_name);
@@ -91,4 +91,3 @@ class PatientDeduplicationTest extends TestCase
         $this->assertEquals('INS456', $patient->insurance_number);
     }
 }
-

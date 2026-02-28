@@ -27,12 +27,16 @@ class ReportingController extends Controller
      *     summary="Get aggregated reporting statistics",
      *     description="Get comprehensive statistics about hospitals, patients, staff, referrals, and system metrics. Date filters apply to referral trends only.",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="date_from", in="query", description="Start date for referral statistics (YYYY-MM-DD). Defaults to 30 days ago.", @OA\Schema(type="string", format="date", example="2024-01-01")),
      *     @OA\Parameter(name="date_to", in="query", description="End date for referral statistics (YYYY-MM-DD). Defaults to today.", @OA\Schema(type="string", format="date", example="2024-01-31")),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Statistics retrieved successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
@@ -45,8 +49,10 @@ class ReportingController extends Controller
      *                 @OA\Property(
      *                     property="staff_by_role",
      *                     type="array",
+     *
      *                     @OA\Items(
      *                         type="object",
+     *
      *                         @OA\Property(property="role", type="string", example="doctor"),
      *                         @OA\Property(property="count", type="integer", example=30)
      *                     )
@@ -57,8 +63,10 @@ class ReportingController extends Controller
      *                 @OA\Property(
      *                     property="by_urgency",
      *                     type="array",
+     *
      *                     @OA\Items(
      *                         type="object",
+     *
      *                         @OA\Property(property="urgency", type="string", example="urgent"),
      *                         @OA\Property(property="count", type="integer", example=300)
      *                     )
@@ -66,8 +74,10 @@ class ReportingController extends Controller
      *                 @OA\Property(
      *                     property="by_status",
      *                     type="array",
+     *
      *                     @OA\Items(
      *                         type="object",
+     *
      *                         @OA\Property(property="status", type="string", example="assigned"),
      *                         @OA\Property(property="count", type="integer", example=200)
      *                     )
@@ -75,8 +85,10 @@ class ReportingController extends Controller
      *                 @OA\Property(
      *                     property="by_department",
      *                     type="array",
+     *
      *                     @OA\Items(
      *                         type="object",
+     *
      *                         @OA\Property(property="department", type="string", example="cardiology"),
      *                         @OA\Property(property="count", type="integer", example=150)
      *                     )
@@ -85,8 +97,10 @@ class ReportingController extends Controller
      *                     property="referrals_per_day",
      *                     type="array",
      *                     description="Referral counts per day (filtered by date range)",
+     *
      *                     @OA\Items(
      *                         type="object",
+     *
      *                         @OA\Property(property="date", type="string", format="date", example="2024-01-15"),
      *                         @OA\Property(property="count", type="integer", example=25)
      *                     )
@@ -97,6 +111,7 @@ class ReportingController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(response=401, description="Unauthenticated"),
      *     @OA\Response(response=403, description="Forbidden - Admin access required")
      * )
@@ -107,9 +122,9 @@ class ReportingController extends Controller
         $dateTo = $request->input('date_to', now()->toDateString());
 
         // Ensure date_to includes the full day (end of day)
-        $dateToEndOfDay = $dateTo . ' 23:59:59';
+        $dateToEndOfDay = $dateTo.' 23:59:59';
 
-        $dateFilteredQuery = Referral::whereBetween('created_at', [$dateFrom . ' 00:00:00', $dateToEndOfDay]);
+        $dateFilteredQuery = Referral::whereBetween('created_at', [$dateFrom.' 00:00:00', $dateToEndOfDay]);
         $allReferralsQuery = Referral::query();
 
         $stats = [
@@ -124,7 +139,7 @@ class ReportingController extends Controller
                 ->get(),
             'available_staff' => Staff::where('is_available', true)->count(),
             'unavailable_staff' => Staff::where('is_available', false)->count(),
-            
+
             // Referral statistics - total counts (all time)
             'total_referrals' => $allReferralsQuery->count(),
             'by_urgency' => $allReferralsQuery->selectRaw('LOWER(TRIM(urgency)) as urgency, COUNT(*) as count')
@@ -157,7 +172,7 @@ class ReportingController extends Controller
                         'count' => (int) $item->count,
                     ];
                 }),
-            
+
             // Date-filtered statistics for charts
             'referrals_per_day' => $dateFilteredQuery->selectRaw('DATE(created_at) as date, COUNT(*) as count')
                 ->groupBy(DB::raw('DATE(created_at)'))
@@ -173,22 +188,25 @@ class ReportingController extends Controller
                     return $item['date'] !== null;
                 })
                 ->values(),
-            'average_ai_confidence' => (function() use ($dateFilteredQuery) {
+            'average_ai_confidence' => (function () use ($dateFilteredQuery) {
                 $avg = $dateFilteredQuery->clone()->whereNotNull('ai_confidence_score')
                     ->avg('ai_confidence_score');
+
                 // Return raw float (0-1), frontend will handle percentage conversion
                 return $avg ? (float) $avg : 0.0;
             })(),
-            'escalation_rate' => (function() use ($dateFilteredQuery) {
+            'escalation_rate' => (function () use ($dateFilteredQuery) {
                 // Escalation rate: percentage of emergency referrals that were escalated
                 $emergencyReferrals = $dateFilteredQuery->clone()->where('urgency', 'emergency');
                 $totalEmergency = $emergencyReferrals->count();
-                if ($totalEmergency === 0) return 0.0;
-                
+                if ($totalEmergency === 0) {
+                    return 0.0;
+                }
+
                 $escalatedCount = $emergencyReferrals->clone()->whereHas('auditLogs', function ($q) {
                     $q->where('action', 'escalated');
                 })->count();
-                
+
                 return (float) ($escalatedCount / $totalEmergency * 100);
             })(),
             'cancellation_rate' => (float) ($dateFilteredQuery->clone()->where('status', 'cancelled')

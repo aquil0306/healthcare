@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Referral extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'patient_id',
         'hospital_id',
@@ -100,6 +101,6 @@ class Referral extends Model
 
     public function canBeCancelled(): bool
     {
-        return !$this->isCompleted();
+        return ! $this->isCompleted();
     }
 }

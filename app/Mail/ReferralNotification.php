@@ -16,8 +16,7 @@ class ReferralNotification extends Mailable
     public function __construct(
         public Referral $referral,
         public string $message
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {

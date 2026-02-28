@@ -13,7 +13,7 @@ class HospitalFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->company() . ' Hospital',
+            'name' => $this->faker->company().' Hospital',
             'code' => strtoupper(Str::random(6)),
             'status' => 'active',
             'api_key' => Str::random(64),

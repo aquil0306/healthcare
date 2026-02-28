@@ -18,7 +18,7 @@ class UpdateStaffRequest extends FormRequest
 
         return [
             'name' => 'sometimes|string|max:255',
-            'email' => ['sometimes', 'email', 'unique:users,email,' . $staff->user_id, 'unique:staff,email,' . $staff->id],
+            'email' => ['sometimes', 'email', 'unique:users,email,'.$staff->user_id, 'unique:staff,email,'.$staff->id],
             'role' => ['sometimes', Rule::in(['admin', 'doctor', 'coordinator'])],
             'department' => 'nullable|string|max:255',
             'password' => 'sometimes|string|min:8',
@@ -26,4 +26,3 @@ class UpdateStaffRequest extends FormRequest
         ];
     }
 }
-

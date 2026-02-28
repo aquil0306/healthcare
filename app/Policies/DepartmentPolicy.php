@@ -33,6 +33,7 @@ class DepartmentPolicy
         if ($department->referrals()->count() > 0 || $department->staff()->count() > 0) {
             return false;
         }
+
         return $user->isAdmin() || $user->hasPermissionTo('delete-departments');
     }
 }

@@ -33,4 +33,3 @@ class StaffRepository extends BaseRepository
             ->get();
     }
 }
-

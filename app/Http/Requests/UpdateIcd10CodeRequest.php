@@ -15,7 +15,7 @@ class UpdateIcd10CodeRequest extends FormRequest
     public function rules(): array
     {
         $icd10Code = $this->route('icd10_code');
-        
+
         return [
             'code' => ['required', 'string', 'max:10', Rule::unique('icd10_codes', 'code')->ignore($icd10Code->id)],
             'description' => 'required|string|max:500',

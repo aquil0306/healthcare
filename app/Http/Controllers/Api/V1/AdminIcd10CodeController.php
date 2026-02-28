@@ -15,7 +15,7 @@ class AdminIcd10CodeController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        if (!Gate::allows('viewAny', Icd10Code::class)) {
+        if (! Gate::allows('viewAny', Icd10Code::class)) {
             abort(403, 'This action is unauthorized.');
         }
 
@@ -25,8 +25,8 @@ class AdminIcd10CodeController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('code', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhere('category', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('category', 'like', "%{$search}%");
             });
         }
 

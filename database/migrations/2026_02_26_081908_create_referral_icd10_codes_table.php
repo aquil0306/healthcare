@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('referral_id')->constrained()->onDelete('cascade');
             $table->string('code'); // ICD-10 diagnosis code
             $table->timestamps();
-            
+
             $table->index('referral_id');
         });
     }

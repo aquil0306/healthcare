@@ -16,15 +16,14 @@ class SendSlackNotification implements ShouldQueue
         public Staff $staff,
         public Referral $referral,
         public string $message
-    ) {
-    }
+    ) {}
 
     public function handle(): void
     {
         // In a real implementation, integrate with Slack API
         // For now, we'll just log it
         Log::info("Slack notification sent to staff {$this->staff->id}: {$this->message}");
-        
+
         // Create notification record
         \App\Models\Notification::create([
             'staff_id' => $this->staff->id,

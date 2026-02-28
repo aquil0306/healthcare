@@ -23,11 +23,15 @@ class NotificationController extends Controller
      *     summary="List notifications for authenticated user",
      *     description="Get a paginated list of notifications for the currently authenticated staff member",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="page", in="query", description="Page number for pagination", @OA\Schema(type="integer", example=1)),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Notifications retrieved successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Notifications retrieved successfully"),
      *             @OA\Property(
@@ -36,8 +40,10 @@ class NotificationController extends Controller
      *                 @OA\Property(
      *                     property="data",
      *                     type="array",
+     *
      *                     @OA\Items(
      *                         type="object",
+     *
      *                         @OA\Property(property="id", type="integer", example=1),
      *                         @OA\Property(property="type", type="string", example="referral_assigned"),
      *                         @OA\Property(property="message", type="string", example="New referral assigned to you"),
@@ -51,15 +57,16 @@ class NotificationController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(response=401, description="Unauthenticated")
      * )
      */
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         // Check if user has a staff record
-        if (!$user->staff) {
+        if (! $user->staff) {
             return response()->json([
                 'success' => true,
                 'message' => 'No staff record found for this user',
@@ -80,8 +87,8 @@ class NotificationController extends Controller
 
         $response = [
             'success' => true,
-            'message' => $notifications->total() === 0 
-                ? 'No notifications found. You will receive notifications when referrals are assigned to you or when your department receives new referrals.' 
+            'message' => $notifications->total() === 0
+                ? 'No notifications found. You will receive notifications when referrals are assigned to you or when your department receives new referrals.'
                 : 'Notifications retrieved successfully',
             'data' => $notifications,
         ];
@@ -97,11 +104,15 @@ class NotificationController extends Controller
      *     summary="Acknowledge a notification",
      *     description="Mark a notification as read/acknowledged",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="notification", in="path", required=true, description="Notification ID", @OA\Schema(type="integer", example=1)),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Notification acknowledged successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Notification acknowledged"),
      *             @OA\Property(
@@ -113,6 +124,7 @@ class NotificationController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(response=401, description="Unauthenticated"),
      *     @OA\Response(response=403, description="Forbidden - Notification does not belong to user"),
      *     @OA\Response(response=404, description="Notification not found")

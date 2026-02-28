@@ -52,7 +52,7 @@ class AiTriageServiceTest extends TestCase
 
         // Bind the mock to the container - this will be used when AiTriageService is resolved
         $this->app->instance(AiManager::class, $mockAiManager);
-        
+
         // Re-resolve the service with mocked AI manager
         $this->service = app(AiTriageService::class);
     }
@@ -217,4 +217,3 @@ class AiTriageServiceTest extends TestCase
         $this->assertTrue(true);
     }
 }
-

@@ -18,10 +18,9 @@ class ReferralIcd10CodeResource extends JsonResource
             'id' => $this->id,
             'referral_id' => $this->referral_id,
             'code' => $this->code, // Keep for backward compatibility
-            'icd10_code' => $this->whenLoaded('icd10Code', fn() => new Icd10CodeResource($this->icd10Code)),
+            'icd10_code' => $this->whenLoaded('icd10Code', fn () => new Icd10CodeResource($this->icd10Code)),
             'created_at' => $this->created_at->diffForHumans(),
             'created_at_raw' => $this->created_at->toIso8601String(),
         ];
     }
 }
-

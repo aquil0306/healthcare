@@ -12,7 +12,7 @@ class EnsureRole
     {
         $user = $request->user();
 
-        if (!$user || !$user->staff) {
+        if (! $user || ! $user->staff) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
@@ -21,7 +21,7 @@ class EnsureRole
 
         $userRole = $user->staff->role;
 
-        if (!in_array($userRole, $roles)) {
+        if (! in_array($userRole, $roles)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Insufficient permissions',

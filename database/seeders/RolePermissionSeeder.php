@@ -132,7 +132,6 @@ class RolePermissionSeeder extends Seeder
 
         $this->command->info('Roles and permissions seeded successfully!');
         $this->command->info('Created roles: admin, doctor, coordinator');
-        $this->command->info('Created ' . count($permissions) . ' permissions');
+        $this->command->info('Created '.count($permissions).' permissions');
     }
 }
-

@@ -38,14 +38,15 @@ class QueuedNotification extends Model
         if ($value === null) {
             return ['in_app', 'email'];
         }
-        
+
         // If already an array (from cast), return it
         if (is_array($value)) {
             return $value;
         }
-        
+
         // If it's a JSON string, decode it
         $decoded = json_decode($value, true);
+
         return $decoded ?? ['in_app', 'email'];
     }
 

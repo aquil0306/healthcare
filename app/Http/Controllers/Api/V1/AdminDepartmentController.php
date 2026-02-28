@@ -15,7 +15,7 @@ class AdminDepartmentController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        if (!Gate::allows('viewAny', Department::class)) {
+        if (! Gate::allows('viewAny', Department::class)) {
             abort(403, 'This action is unauthorized.');
         }
 
@@ -25,8 +25,8 @@ class AdminDepartmentController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('code', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('code', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 

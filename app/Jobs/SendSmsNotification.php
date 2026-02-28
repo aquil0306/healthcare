@@ -16,15 +16,14 @@ class SendSmsNotification implements ShouldQueue
         public Staff $staff,
         public Referral $referral,
         public string $message
-    ) {
-    }
+    ) {}
 
     public function handle(): void
     {
         // In a real implementation, integrate with SMS service (Twilio, etc.)
         // For now, we'll just log it
         Log::info("SMS sent to staff {$this->staff->id}: {$this->message}");
-        
+
         // Create notification record
         \App\Models\Notification::create([
             'staff_id' => $this->staff->id,

@@ -15,7 +15,7 @@ class UpdateDepartmentRequest extends FormRequest
     public function rules(): array
     {
         $department = $this->route('department');
-        
+
         return [
             'name' => ['required', 'string', 'max:255', Rule::unique('departments', 'name')->ignore($department->id)],
             'code' => ['nullable', 'string', 'max:20', Rule::unique('departments', 'code')->ignore($department->id)],

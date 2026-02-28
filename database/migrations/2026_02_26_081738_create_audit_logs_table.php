@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('new_value')->nullable();
             $table->json('metadata')->nullable(); // Additional context
             $table->timestamps();
-            
+
             $table->index('referral_id');
             $table->index('user_id');
         });

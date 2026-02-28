@@ -2,21 +2,24 @@
 
 namespace App\Services;
 
-use App\Models\Referral;
 use App\Models\AiTriageLog;
+use App\Models\Referral;
 use App\Repositories\ReferralRepository;
-use App\Services\AuditService;
-use App\Services\DepartmentSuggestionService;
 use Illuminate\Support\Facades\Log;
 use Laravel\Ai\AiManager;
 
 class AiTriageService
 {
     private ReferralRepository $referralRepository;
+
     private AuditService $auditService;
+
     private DepartmentSuggestionService $departmentSuggestionService;
+
     private AiManager $aiManager;
+
     private int $maxRetries = 3;
+
     private int $retryDelay = 5; // seconds
 
     public function __construct(
@@ -35,7 +38,7 @@ class AiTriageService
     {
         // Load ICD-10 codes with their relationships for department suggestions
         $referral->load(['icd10Codes.icd10Code.departments']);
-        
+
         $inputData = [
             'diagnosis_codes' => $referral->icd10Codes->pluck('code')->toArray(),
             'clinical_notes' => $referral->clinical_notes,
@@ -64,14 +67,14 @@ class AiTriageService
             // Get the provider name from config
             $providerName = config('ai.default', 'openai');
             $provider = $this->aiManager->textProvider($providerName);
-            
+
             // Create an agent with instructions
             $agent = new \Laravel\Ai\AnonymousAgent(
                 'You are a medical triage AI assistant. Analyze referral information and provide structured JSON responses only. Be precise and accurate in your medical assessments.',
                 [],
                 []
             );
-            
+
             // Create agent prompt
             $agentPrompt = new \Laravel\Ai\Prompts\AgentPrompt(
                 $agent,
@@ -81,14 +84,14 @@ class AiTriageService
                 $provider->defaultTextModel(),
                 30 // timeout in seconds
             );
-            
+
             // Get AI response
             $response = $provider->prompt($agentPrompt);
-            
+
             // Get the response content (TextResponse has a public $text property)
             $content = $response->text;
             $data = $this->parseAiResponse($content);
-            
+
             $log->update([
                 'output_data' => [
                     'raw_response' => $content,
@@ -109,41 +112,41 @@ class AiTriageService
                 'status' => 'triaged',
             ]);
 
-                // Log status change
-                if ($oldStatus !== 'triaged') {
-                    $this->auditService->logChange(
-                        $referral,
-                        'status_changed',
-                        'status',
-                        $oldStatus,
-                        'triaged'
-                    );
-                }
+            // Log status change
+            if ($oldStatus !== 'triaged') {
+                $this->auditService->logChange(
+                    $referral,
+                    'status_changed',
+                    'status',
+                    $oldStatus,
+                    'triaged'
+                );
+            }
 
-                // Log urgency change if it changed
-                if ($oldUrgency !== $referral->urgency) {
-                    $this->auditService->logChange(
-                        $referral,
-                        'urgency_changed',
-                        'urgency',
-                        $oldUrgency,
-                        $referral->urgency
-                    );
-                }
+            // Log urgency change if it changed
+            if ($oldUrgency !== $referral->urgency) {
+                $this->auditService->logChange(
+                    $referral,
+                    'urgency_changed',
+                    'urgency',
+                    $oldUrgency,
+                    $referral->urgency
+                );
+            }
 
-                // Log department change if it changed
-                if ($oldDepartment !== $referral->department) {
-                    $this->auditService->logChange(
-                        $referral,
-                        'department_changed',
-                        'department',
-                        $oldDepartment,
-                        $referral->department
-                    );
-                }
+            // Log department change if it changed
+            if ($oldDepartment !== $referral->department) {
+                $this->auditService->logChange(
+                    $referral,
+                    'department_changed',
+                    'department',
+                    $oldDepartment,
+                    $referral->department
+                );
+            }
 
-                // Trigger notification after successful triage
-                event(new \App\Events\ReferralTriaged($referral));
+            // Trigger notification after successful triage
+            event(new \App\Events\ReferralTriaged($referral));
         } catch (\Exception $e) {
             $log->update([
                 'retry_count' => $attempt + 1,
@@ -152,13 +155,13 @@ class AiTriageService
 
             if ($attempt < $this->maxRetries) {
                 $log->update(['status' => 'retrying']);
-                
+
                 // Queue retry
                 dispatch(new \App\Jobs\RetryAiTriage($referral, $log, $attempt + 1))
                     ->delay(now()->addSeconds($this->retryDelay * ($attempt + 1)));
             } else {
                 $log->update(['status' => 'failed']);
-                
+
                 // Fallback: set to routine urgency and default department
                 $oldStatus = $referral->status;
                 $oldUrgency = $referral->urgency;
@@ -221,7 +224,7 @@ class AiTriageService
     private function buildTriagePrompt(array $diagnosisCodes, string $clinicalNotes, ?Referral $referral = null): string
     {
         $codesList = implode(', ', $diagnosisCodes);
-        
+
         // Get department suggestions based on ICD-10 code mappings
         $departmentContext = '';
         if ($referral) {
@@ -236,13 +239,13 @@ class AiTriageService
                 }
             }
         }
-        
+
         // Get list of available departments for the prompt
         $availableDepartments = \App\Models\Department::where('is_active', true)
             ->pluck('name')
-            ->map(fn($name) => strtolower($name))
+            ->map(fn ($name) => strtolower($name))
             ->implode(', ');
-        
+
         return <<<PROMPT
 Analyze the following medical referral and provide a JSON response with:
 1. urgency: one of "routine", "urgent", or "emergency"
@@ -267,7 +270,6 @@ Respond ONLY with valid JSON in this exact format:
 PROMPT;
     }
 
-
     /**
      * Parse AI response and extract structured data
      */
@@ -284,7 +286,7 @@ PROMPT;
 
         $data = json_decode($content, true);
 
-        if (!is_array($data)) {
+        if (! is_array($data)) {
             // Fallback: try to extract values using regex
             $urgency = $this->extractValue($content, 'urgency', ['routine', 'urgent', 'emergency']);
             $department = $this->extractValue($content, 'suggested_department', ['cardiology', 'neurology', 'orthopedics', 'general']);
@@ -312,7 +314,7 @@ PROMPT;
     private function extractValue(string $content, string $key, array $allowedValues): ?string
     {
         // Try JSON-like patterns
-        if (preg_match('/"?' . $key . '"?\s*[:=]\s*"([^"]+)"/i', $content, $matches)) {
+        if (preg_match('/"?'.$key.'"?\s*[:=]\s*"([^"]+)"/i', $content, $matches)) {
             $value = strtolower(trim($matches[1]));
             if (in_array($value, $allowedValues)) {
                 return $value;
@@ -341,6 +343,7 @@ PROMPT;
             if ($score > 1) {
                 $score = $score / 100;
             }
+
             return min(1.0, max(0.0, $score));
         }
 
@@ -352,4 +355,3 @@ PROMPT;
         return null;
     }
 }
-

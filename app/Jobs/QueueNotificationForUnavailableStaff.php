@@ -13,8 +13,7 @@ class QueueNotificationForUnavailableStaff implements ShouldQueue
 
     public function __construct(
         public Referral $referral
-    ) {
-    }
+    ) {}
 
     public function handle(NotificationService $service): void
     {

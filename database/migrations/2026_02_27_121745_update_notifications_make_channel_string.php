@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -14,7 +14,7 @@ return new class extends Migration
     {
         // For MySQL/MariaDB, we need to drop the enum and change to string
         if (DB::getDriverName() === 'mysql' || DB::getDriverName() === 'mariadb') {
-            DB::statement("ALTER TABLE notifications MODIFY COLUMN channel VARCHAR(50) NOT NULL");
+            DB::statement('ALTER TABLE notifications MODIFY COLUMN channel VARCHAR(50) NOT NULL');
         } else {
             Schema::table('notifications', function (Blueprint $table) {
                 $table->string('channel', 50)->change();

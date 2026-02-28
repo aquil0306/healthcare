@@ -57,4 +57,3 @@ class StaffPolicy
         return $user->isAdmin() || $user->can('staff.assign-permission');
     }
 }
-

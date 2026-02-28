@@ -37,4 +37,3 @@ class HospitalPolicy
         return $user->isAdmin() || $user->can('hospitals.regenerate-api-key');
     }
 }
-

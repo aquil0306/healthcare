@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Referral;
 use App\Models\AuditLog;
+use App\Models\Referral;
 use Illuminate\Support\Facades\Auth;
 
 class AuditService
@@ -21,4 +21,3 @@ class AuditService
         ]);
     }
 }
-

@@ -12,11 +12,12 @@ $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
 // Suppress the PathItem warning completely
-set_error_handler(function($errno, $errstr, $errfile, $errline) {
+set_error_handler(function ($errno, $errstr, $errfile, $errline) {
     if (strpos($errstr, 'PathItem') !== false || strpos($errstr, 'Components') !== false || strpos($errstr, 'Required') !== false) {
         // Suppress validation warnings - they don't prevent generation
         return true;
     }
+
     return false;
 }, E_WARNING | E_USER_WARNING | E_USER_NOTICE);
 
@@ -40,22 +41,22 @@ try {
         ->files()
         ->name('*.php')
         ->in([base_path('app/Http/Controllers'), base_path('app')]);
-    
-    $generator = new \OpenApi\Generator();
+
+    $generator = new \OpenApi\Generator;
     $openapi = $generator->generate($finder);
-    
+
     if ($openapi) {
         $json = $openapi->toJson();
-        
-        if (!is_dir(storage_path('api-docs'))) {
+
+        if (! is_dir(storage_path('api-docs'))) {
             mkdir(storage_path('api-docs'), 0755, true);
         }
-        
+
         file_put_contents($docsPath, $json);
-        
+
         $spec = json_decode($json, true);
         $pathCount = isset($spec['paths']) ? count($spec['paths']) : 0;
-        
+
         if ($pathCount > 0) {
             echo "\n✅ Swagger documentation generated successfully!\n";
             echo "📄 Found {$pathCount} API paths\n";
@@ -73,12 +74,12 @@ try {
     ob_start();
     $exitCode = $kernel->call('l5-swagger:generate', [], null);
     $output = ob_get_clean();
-    
+
     // Check if file was created
     if (file_exists($docsPath) && filesize($docsPath) > 100) {
         $spec = json_decode(file_get_contents($docsPath), true);
         $pathCount = isset($spec['paths']) ? count($spec['paths']) : 0;
-        
+
         if ($pathCount > 0) {
             echo "\n✅ Swagger documentation generated successfully!\n";
             echo "📄 Found {$pathCount} API paths\n";
@@ -91,7 +92,7 @@ try {
             echo "💡 Access Swagger UI at: http://localhost:8000/api/documentation\n";
         }
     } else {
-        throw new Exception("L5-Swagger generation failed");
+        throw new Exception('L5-Swagger generation failed');
     }
 } catch (Exception $l5Exception) {
     // Try route-based generation
@@ -111,7 +112,7 @@ try {
                 ['url' => 'http://localhost:8000', 'description' => 'Local API Server'],
                 ['url' => 'https://api.healthcare.com', 'description' => 'Production API Server'],
             ],
-            'paths' => (object)[],
+            'paths' => (object) [],
             'components' => [
                 'securitySchemes' => [
                     'apiKey' => [
@@ -129,8 +130,8 @@ try {
                 ],
             ],
         ];
-        
-        if (!is_dir(storage_path('api-docs'))) {
+
+        if (! is_dir(storage_path('api-docs'))) {
             mkdir(storage_path('api-docs'), 0755, true);
         }
         file_put_contents($docsPath, json_encode($openApiSpec, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));

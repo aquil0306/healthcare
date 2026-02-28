@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class AiTriageLog extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'referral_id',
         'input_data',

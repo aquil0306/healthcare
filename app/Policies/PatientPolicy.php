@@ -32,4 +32,3 @@ class PatientPolicy
         return $user->isAdmin() || $user->can('patients.delete');
     }
 }
-

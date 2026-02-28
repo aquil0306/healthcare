@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class AuditLog extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'referral_id',
         'user_id',

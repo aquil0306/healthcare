@@ -22,4 +22,3 @@ class StorePatientRequest extends FormRequest
         ];
     }
 }
-

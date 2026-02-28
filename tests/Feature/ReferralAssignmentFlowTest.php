@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Events\ReferralTriaged;
 use App\Models\Department;
 use App\Models\Hospital;
 use App\Models\Patient;
@@ -16,7 +15,6 @@ use App\Services\AuditService;
 use App\Services\NotificationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Laravel\Ai\AiManager;
 use Laravel\Ai\Contracts\Providers\TextProvider;
@@ -35,7 +33,9 @@ class ReferralAssignmentFlowTest extends TestCase
     use RefreshDatabase;
 
     private AiTriageService $aiTriageService;
+
     private NotificationService $notificationService;
+
     private AuditService $auditService;
 
     protected function setUp(): void
@@ -300,7 +300,7 @@ class ReferralAssignmentFlowTest extends TestCase
         $queuedNotification = QueuedNotification::where('staff_id', $staff->id)
             ->where('referral_id', $referral->id)
             ->first();
-        
+
         $this->assertNotNull($queuedNotification->processed_at, 'Queued notification should be marked as processed');
 
         // Step 7: Verify actual notification was created
@@ -382,4 +382,3 @@ class ReferralAssignmentFlowTest extends TestCase
         $this->app->instance(AiManager::class, $mockAiManager);
     }
 }
-

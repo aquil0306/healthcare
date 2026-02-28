@@ -14,7 +14,7 @@ class StaffFactory extends Factory
     {
         $role = $this->faker->randomElement(['admin', 'doctor', 'coordinator']);
         $departments = ['cardiology', 'neurology', 'orthopedics', 'general', 'emergency'];
-        
+
         return [
             'user_id' => User::factory(),
             'name' => $this->faker->name(),

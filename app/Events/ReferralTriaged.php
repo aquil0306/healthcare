@@ -13,6 +13,5 @@ class ReferralTriaged
 
     public function __construct(
         public Referral $referral
-    ) {
-    }
+    ) {}
 }

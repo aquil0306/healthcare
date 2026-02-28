@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Referral;
 use App\Models\Staff;
-use App\Models\User;
 use App\Services\AuditService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
@@ -49,7 +48,7 @@ class ReferralLifecycleTest extends TestCase
         $referral->refresh();
         $this->assertEquals('assigned', $referral->status);
         $this->assertEquals($staff->id, $referral->assigned_staff_id);
-        
+
         // Verify audit log was created
         $this->assertDatabaseHas('audit_logs', [
             'referral_id' => $referral->id,
@@ -84,7 +83,7 @@ class ReferralLifecycleTest extends TestCase
         $referral->refresh();
         $this->assertEquals('cancelled', $referral->status);
         $this->assertEquals($reason, $referral->cancellation_reason);
-        
+
         // Verify audit log
         $auditLog = $referral->auditLogs()->where('action', 'cancelled')->first();
         $this->assertNotNull($auditLog);
@@ -131,10 +130,10 @@ class ReferralLifecycleTest extends TestCase
         // Verify all transitions logged
         $auditLogs = $referral->auditLogs()->where('field', 'status')->get();
         $this->assertCount(2, $auditLogs);
-        
+
         $this->assertEquals('submitted', $auditLogs[0]->old_value);
         $this->assertEquals('triaged', $auditLogs[0]->new_value);
-        
+
         $this->assertEquals('triaged', $auditLogs[1]->old_value);
         $this->assertEquals('assigned', $auditLogs[1]->new_value);
     }
@@ -166,4 +165,3 @@ class ReferralLifecycleTest extends TestCase
         $this->assertNotNull($referral->acknowledged_at);
     }
 }
-

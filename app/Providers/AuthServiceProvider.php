@@ -20,8 +20,6 @@ use App\Policies\PatientPolicy;
 use App\Policies\ReferralPolicy;
 use App\Policies\StaffPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -70,4 +68,3 @@ class AuthServiceProvider extends ServiceProvider
         });
     }
 }
-

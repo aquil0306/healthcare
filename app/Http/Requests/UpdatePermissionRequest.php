@@ -16,8 +16,7 @@ class UpdatePermissionRequest extends FormRequest
         $permission = $this->route('permission');
 
         return [
-            'name' => ['required', 'string', 'max:255', 'unique:permissions,name,' . $permission->id],
+            'name' => ['required', 'string', 'max:255', 'unique:permissions,name,'.$permission->id],
         ];
     }
 }
-

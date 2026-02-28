@@ -14,7 +14,7 @@ class AdminAuditLogController extends Controller
     public function index(Request $request): JsonResponse
     {
         // Only admins can view audit logs
-        if (!Gate::allows('viewAny', AuditLog::class)) {
+        if (! Gate::allows('viewAny', AuditLog::class)) {
             abort(403, 'This action is unauthorized.');
         }
 
@@ -54,9 +54,9 @@ class AdminAuditLogController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('action', 'like', "%{$search}%")
-                  ->orWhere('field', 'like', "%{$search}%")
-                  ->orWhere('old_value', 'like', "%{$search}%")
-                  ->orWhere('new_value', 'like', "%{$search}%");
+                    ->orWhere('field', 'like', "%{$search}%")
+                    ->orWhere('old_value', 'like', "%{$search}%")
+                    ->orWhere('new_value', 'like', "%{$search}%");
             });
         }
 
@@ -69,7 +69,7 @@ class AdminAuditLogController extends Controller
 
     public function show(AuditLog $auditLog): JsonResponse
     {
-        if (!Gate::allows('view', $auditLog)) {
+        if (! Gate::allows('view', $auditLog)) {
             abort(403, 'This action is unauthorized.');
         }
 

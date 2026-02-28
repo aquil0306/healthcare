@@ -2,14 +2,17 @@
 
 /**
  * @OA\OpenApi(
+ *
  *     @OA\Info(
  *         title="Healthcare Referral Management API",
  *         version="1.0.0",
  *         description="API for managing healthcare referrals with AI-assisted triage, notifications, and audit logging",
+ *
  *         @OA\Contact(
  *             email="support@healthcare.com"
  *         )
  *     ),
+ *
  *     @OA\Server(
  *         url="http://localhost:8000",
  *         description="Local API Server"
@@ -18,8 +21,10 @@
  *         url="https://api.healthcare.com",
  *         description="Production API Server"
  *     ),
+ *
  *     @OA\Components(
  *         securitySchemes={
+ *
  *             @OA\SecurityScheme(
  *                 securityScheme="apiKey",
  *                 type="apiKey",
@@ -35,9 +40,11 @@
  *                 description="Staff/Admin Token Authentication"
  *             )
  *         },
+ *
  *         @OA\Schema(
  *             schema="Referral",
  *             type="object",
+ *
  *             @OA\Property(property="id", type="integer", example=123),
  *             @OA\Property(property="patient_id", type="integer", example=45),
  *             @OA\Property(property="hospital_id", type="integer", example=2),
@@ -61,9 +68,11 @@
  *             @OA\Property(property="hospital", ref="#/components/schemas/Hospital"),
  *             @OA\Property(property="assigned_staff", ref="#/components/schemas/Staff")
  *         ),
+ *
  *         @OA\Schema(
  *             schema="Patient",
  *             type="object",
+ *
  *             @OA\Property(property="id", type="integer", example=45),
  *             @OA\Property(property="first_name", type="string", example="John"),
  *             @OA\Property(property="last_name", type="string", example="Doe"),
@@ -74,9 +83,11 @@
  *             @OA\Property(property="created_at", type="string", example="1 month ago"),
  *             @OA\Property(property="created_at_raw", type="string", format="date-time", example="2023-12-15T10:00:00Z")
  *         ),
+ *
  *         @OA\Schema(
  *             schema="Hospital",
  *             type="object",
+ *
  *             @OA\Property(property="id", type="integer", example=2),
  *             @OA\Property(property="name", type="string", example="City General Hospital"),
  *             @OA\Property(property="code", type="string", example="CGH001"),
@@ -85,9 +96,11 @@
  *             @OA\Property(property="created_at", type="string", example="2 months ago"),
  *             @OA\Property(property="created_at_raw", type="string", format="date-time", example="2023-11-15T10:00:00Z")
  *         ),
+ *
  *         @OA\Schema(
  *             schema="Staff",
  *             type="object",
+ *
  *             @OA\Property(property="id", type="integer", example=5),
  *             @OA\Property(property="first_name", type="string", example="Jane"),
  *             @OA\Property(property="last_name", type="string", example="Smith"),
@@ -97,4 +110,3 @@
  *     )
  * )
  */
-

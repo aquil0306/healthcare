@@ -28,4 +28,3 @@ class Icd10CodeResource extends JsonResource
         ];
     }
 }
-

@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\Referral;
-use App\Models\Staff;
 use App\Models\Notification;
 use App\Models\QueuedNotification;
+use App\Models\Referral;
+use App\Models\Staff;
 use App\Repositories\StaffRepository;
 use Illuminate\Support\Facades\Queue;
 
@@ -29,6 +29,7 @@ class NotificationService
         if ($staffMembers->isEmpty()) {
             // Queue notification for when staff becomes available
             dispatch(new \App\Jobs\QueueNotificationForUnavailableStaff($referral));
+
             return;
         }
 
@@ -62,16 +63,17 @@ class NotificationService
             $message .= " - Patient: {$referral->patient->first_name} {$referral->patient->last_name}";
         }
         if ($referral->urgency === 'emergency') {
-            $message .= " [EMERGENCY]";
+            $message .= ' [EMERGENCY]';
         }
-        
+
         // Check if staff is available
-        if (!$staff->is_available) {
+        if (! $staff->is_available) {
             // Queue the notification in the database
             $this->queueNotification($staff, $referral, $message, 'assignment');
+
             return;
         }
-        
+
         // Staff is available, send notification immediately
         $this->sendNotification($staff, $referral, $message, 'assignment');
     }
@@ -96,7 +98,7 @@ class NotificationService
      */
     public function processQueuedNotificationsForStaff(Staff $staff): void
     {
-        if (!$staff->is_available) {
+        if (! $staff->is_available) {
             return; // Staff is not available, don't process
         }
 
@@ -108,7 +110,7 @@ class NotificationService
         foreach ($queuedNotifications as $queuedNotification) {
             // Double-check staff is still available
             $staff->refresh();
-            if (!$staff->is_available) {
+            if (! $staff->is_available) {
                 break; // Staff became unavailable, stop processing
             }
 
@@ -141,7 +143,7 @@ class NotificationService
         // Email notification
         if (in_array('email', $channels) && $staff->user) {
             dispatch(new \App\Jobs\SendEmailNotification($staff->user, $referral, $message));
-            
+
             // Create email notification record
             Notification::create([
                 'staff_id' => $staff->id,
@@ -154,9 +156,9 @@ class NotificationService
         }
 
         // SMS for emergency or if explicitly requested
-        if (in_array('sms', $channels) || ($referral->isEmergency() && !in_array('sms', $channels))) {
+        if (in_array('sms', $channels) || ($referral->isEmergency() && ! in_array('sms', $channels))) {
             dispatch(new \App\Jobs\SendSmsNotification($staff, $referral, $message));
-            
+
             // Create SMS notification record
             Notification::create([
                 'staff_id' => $staff->id,
@@ -187,4 +189,3 @@ class NotificationService
         return $mapping[$department] ?? 'coordinator';
     }
 }
-

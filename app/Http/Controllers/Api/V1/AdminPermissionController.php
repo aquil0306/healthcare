@@ -25,21 +25,23 @@ class AdminPermissionController extends Controller
      *     tags={"Admin"},
      *     summary="List all permissions",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer")),
      *     @OA\Parameter(name="search", in="query", @OA\Schema(type="string")),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
     public function index(Request $request): JsonResponse
     {
-        if (!Gate::allows('viewAny', Permission::class)) {
+        if (! Gate::allows('viewAny', Permission::class)) {
             abort(403, 'Unauthorized action.');
         }
 
         $query = Permission::query();
 
         if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%'.$request->search.'%');
         }
 
         $permissions = $query->withCount('roles')
@@ -59,7 +61,9 @@ class AdminPermissionController extends Controller
      *     tags={"Admin"},
      *     summary="View permission details",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -82,13 +86,17 @@ class AdminPermissionController extends Controller
      *     tags={"Admin"},
      *     summary="Create a new permission",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"name"},
+     *
      *             @OA\Property(property="name", type="string")
      *         )
      *     ),
+     *
      *     @OA\Response(response=201, description="Created")
      * )
      */
@@ -113,13 +121,18 @@ class AdminPermissionController extends Controller
      *     tags={"Admin"},
      *     summary="Update a permission",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="name", type="string")
      *         )
      *     ),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -143,7 +156,9 @@ class AdminPermissionController extends Controller
      *     tags={"Admin"},
      *     summary="Delete a permission",
      *     security={{"sanctum": {}}},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -166,4 +181,3 @@ class AdminPermissionController extends Controller
         ]);
     }
 }
-

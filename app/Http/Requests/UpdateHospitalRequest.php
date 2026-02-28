@@ -17,9 +17,8 @@ class UpdateHospitalRequest extends FormRequest
 
         return [
             'name' => 'sometimes|string|max:255',
-            'code' => ['sometimes', 'string', 'max:255', 'unique:hospitals,code,' . $hospital->id],
+            'code' => ['sometimes', 'string', 'max:255', 'unique:hospitals,code,'.$hospital->id],
             'status' => 'sometimes|in:active,suspended',
         ];
     }
 }
-

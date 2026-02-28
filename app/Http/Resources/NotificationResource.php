@@ -30,8 +30,8 @@ class NotificationResource extends JsonResource
             'created_at_raw' => $this->created_at->toIso8601String(),
             'updated_at' => $this->updated_at->diffForHumans(),
             'updated_at_raw' => $this->updated_at->toIso8601String(),
-            'staff' => $this->whenLoaded('staff', fn() => new StaffResource($this->staff)),
-            'referral' => $this->whenLoaded('referral', fn() => [
+            'staff' => $this->whenLoaded('staff', fn () => new StaffResource($this->staff)),
+            'referral' => $this->whenLoaded('referral', fn () => [
                 'id' => $this->referral->id,
                 'patient_id' => $this->referral->patient_id,
                 'hospital_id' => $this->referral->hospital_id,

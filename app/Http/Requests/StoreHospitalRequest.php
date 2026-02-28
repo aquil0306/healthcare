@@ -20,4 +20,3 @@ class StoreHospitalRequest extends FormRequest
         ];
     }
 }
-
