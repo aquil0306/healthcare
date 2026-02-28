@@ -30,14 +30,18 @@ class EmergencyEscalationTest extends TestCase
 
     public function test_escalates_emergency_referral_not_acknowledged_within_2_minutes(): void
     {
-        // Create admin staff
-        $admin = Staff::factory()->create(['role' => 'admin']);
+        // Create admin staff with user and ensure they are available
+        $admin = Staff::factory()->create([
+            'role' => 'admin',
+            'is_available' => true,
+        ]);
 
         // Create emergency referral older than 2 minutes
         $referral = Referral::factory()->create([
             'urgency' => 'emergency',
             'status' => 'triaged', // Not acknowledged
             'created_at' => now()->subMinutes(3),
+            'processed_at' => null, // Explicitly set to null to use created_at for escalation check
         ]);
 
         $this->escalationService->checkAndEscalate();
