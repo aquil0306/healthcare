@@ -21,6 +21,7 @@ class UpdateStaffRequest extends FormRequest
             'email' => ['sometimes', 'email', 'unique:users,email,'.$staff->user_id, 'unique:staff,email,'.$staff->id],
             'role' => ['sometimes', Rule::in(['admin', 'doctor', 'coordinator'])],
             'department' => 'nullable|string|max:255',
+            'department_id' => 'nullable|exists:departments,id',
             'password' => 'sometimes|string|min:8',
             'is_available' => 'sometimes|boolean',
         ];

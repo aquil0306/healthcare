@@ -43,14 +43,21 @@ class AdminStaffController extends Controller
     {
         $this->authorize('viewAny', Staff::class);
 
-        $query = Staff::with(['user.roles', 'user.permissions']);
+        $query = Staff::with(['user.roles', 'user.permissions', 'department']);
 
         if ($request->has('role')) {
-            $query->where('role', $request->role);
+            // Filter by Spatie role instead of column
+            $query->whereHas('user.roles', function ($q) use ($request) {
+                $q->where('name', $request->role);
+            });
         }
 
         if ($request->has('department')) {
             $query->where('department', $request->department);
+        }
+
+        if ($request->has('department_id')) {
+            $query->where('department_id', $request->department_id);
         }
 
         $staff = $query->orderBy('created_at', 'desc')->paginate(15);
@@ -77,7 +84,7 @@ class AdminStaffController extends Controller
     {
         $this->authorize('view', $staff);
 
-        $staff->load(['user.roles', 'user.permissions', 'assignedReferrals.patient', 'assignedReferrals.hospital']);
+        $staff->load(['user.roles', 'user.permissions', 'department', 'assignedReferrals.patient', 'assignedReferrals.hospital']);
 
         return (new StaffResource($staff))->additional([
             'success' => true,
@@ -121,17 +128,35 @@ class AdminStaffController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        // Create staff record
+        // Get department name if department_id is provided
+        $departmentName = null;
+        if (isset($validated['department_id']) && $validated['department_id'] !== null) {
+            $department = \App\Models\Department::find($validated['department_id']);
+            $departmentName = $department ? $department->name : null;
+        } elseif (isset($validated['department'])) {
+            $departmentName = $validated['department'];
+        }
+
+        // Create staff record (role is managed by Spatie, not stored in column)
         $staff = Staff::create([
             'user_id' => $user->id,
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'role' => $validated['role'],
-            'department' => $validated['department'] ?? null,
+            'department' => $departmentName,
+            'department_id' => $validated['department_id'] ?? null,
             'is_available' => $validated['is_available'] ?? true,
         ]);
 
-        $staff->load('user');
+        // Assign Spatie role to user (ensure only one role)
+        $role = Role::where('name', $validated['role'])->first();
+        if ($role) {
+            // Remove any existing roles first to ensure only one role per user
+            $user->roles()->detach();
+            // Assign the new role
+            $user->assignRole($role);
+        }
+
+        $staff->load(['user.roles', 'department']);
 
         return (new StaffResource($staff))->additional([
             'success' => true,
@@ -189,18 +214,52 @@ class AdminStaffController extends Controller
             ]);
         }
 
-        // Update staff record
-        $staffData = array_filter([
-            'name' => $validated['name'] ?? null,
-            'email' => $validated['email'] ?? null,
-            'role' => $validated['role'] ?? null,
-            'department' => $validated['department'] ?? null,
-            'is_available' => $validated['is_available'] ?? null,
-        ], fn ($value) => $value !== null);
+        // Get department name if department_id is provided
+        $departmentName = null;
+        if (isset($validated['department_id'])) {
+            if ($validated['department_id'] !== null) {
+                $department = \App\Models\Department::find($validated['department_id']);
+                $departmentName = $department ? $department->name : null;
+            }
+        } elseif (isset($validated['department'])) {
+            $departmentName = $validated['department'];
+        }
+
+        // Update staff record (role is managed by Spatie, not stored in column)
+        $staffData = [];
+        if (isset($validated['name'])) {
+            $staffData['name'] = $validated['name'];
+        }
+        if (isset($validated['email'])) {
+            $staffData['email'] = $validated['email'];
+        }
+        if (isset($validated['department_id'])) {
+            $staffData['department_id'] = $validated['department_id'];
+            $staffData['department'] = $departmentName;
+        } elseif (isset($validated['department'])) {
+            $staffData['department'] = $validated['department'];
+        }
+        if (isset($validated['is_available'])) {
+            $staffData['is_available'] = $validated['is_available'];
+        }
 
         $staff->update($staffData);
 
-        return (new StaffResource($staff->fresh(['user'])))->additional([
+        // Update Spatie role if role changed
+        if (isset($validated['role'])) {
+            $currentRole = $staff->user->roles()->first()?->name;
+            if ($validated['role'] !== $currentRole) {
+                // Remove all existing roles
+                $staff->user->roles()->detach();
+                // Assign new role
+                $role = Role::where('name', $validated['role'])->first();
+                if ($role) {
+                    $staff->user->assignRole($role);
+                }
+            }
+        }
+
+        return (new StaffResource($staff->fresh(['user.roles', 'department'])))->additional([
             'success' => true,
             'message' => 'Staff member updated successfully',
         ])->response();

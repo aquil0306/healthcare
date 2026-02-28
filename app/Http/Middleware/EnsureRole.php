@@ -19,9 +19,10 @@ class EnsureRole
             ], 403);
         }
 
-        $userRole = $user->staff->role;
+        // Get role from Spatie (first role assigned to user)
+        $userRole = $user->roles()->first()?->name;
 
-        if (! in_array($userRole, $roles)) {
+        if (! $userRole || ! in_array($userRole, $roles)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Insufficient permissions',

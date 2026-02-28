@@ -31,8 +31,7 @@ class EmergencyEscalationTest extends TestCase
     public function test_escalates_emergency_referral_not_acknowledged_within_2_minutes(): void
     {
         // Create admin staff with user and ensure they are available
-        $admin = Staff::factory()->create([
-            'role' => 'admin',
+        $admin = Staff::factory()->admin()->create([
             'is_available' => true,
         ]);
 

@@ -93,8 +93,8 @@ class NotificationServiceTest extends TestCase
             'urgency' => 'emergency',
         ]);
 
-        $admin1 = Staff::factory()->create(['role' => 'admin']);
-        $admin2 = Staff::factory()->create(['role' => 'admin']);
+        $admin1 = Staff::factory()->admin()->create();
+        $admin2 = Staff::factory()->admin()->create();
 
         $this->notificationService->notifyAdminsForEscalation($referral);
 

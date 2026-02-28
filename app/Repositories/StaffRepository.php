@@ -20,7 +20,9 @@ class StaffRepository extends BaseRepository
     {
         return $this->model
             ->where('department', $department)
-            ->where('role', $role)
+            ->whereHas('user.roles', function ($q) use ($role) {
+                $q->where('name', $role);
+            })
             ->where('is_available', true)
             ->get();
     }
@@ -28,7 +30,9 @@ class StaffRepository extends BaseRepository
     public function getAdmins(): \Illuminate\Database\Eloquent\Collection
     {
         return $this->model
-            ->where('role', 'admin')
+            ->whereHas('user.roles', function ($q) {
+                $q->where('name', 'admin');
+            })
             ->where('is_available', true)
             ->get();
     }

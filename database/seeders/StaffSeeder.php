@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Department;
 use App\Models\Staff;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -26,8 +27,8 @@ class StaffSeeder extends Seeder
             [
                 'user_id' => $adminUser->id,
                 'name' => 'Admin User',
-                'role' => 'admin',
                 'department' => null,
+                'department_id' => null,
                 'is_available' => true,
             ]
         );
@@ -38,17 +39,33 @@ class StaffSeeder extends Seeder
             $adminUser->assignRole($adminRole);
         }
 
-        // Create Doctors
-        $departments = ['cardiology', 'neurology', 'orthopedics', 'general'];
-        $roles = ['doctor', 'coordinator'];
+        // Map department names to Department model names
+        $departmentMapping = [
+            'cardiology' => 'Cardiology',
+            'neurology' => 'Neurology',
+            'orthopedics' => 'Orthopedics',
+            'general' => 'Internal Medicine', // Map 'general' to 'Internal Medicine'
+        ];
 
-        foreach ($departments as $index => $department) {
+        // Create Doctors and Coordinators
+        $departments = ['cardiology', 'neurology', 'orthopedics', 'general'];
+
+        foreach ($departments as $departmentKey) {
+            // Find the department by name
+            $departmentName = $departmentMapping[$departmentKey] ?? ucfirst($departmentKey);
+            $department = Department::where('name', $departmentName)->first();
+
+            if (!$department) {
+                $this->command->warn("Department '{$departmentName}' not found. Skipping staff creation for {$departmentKey}.");
+                continue;
+            }
+
             // Doctor
-            $doctorEmail = "doctor.{$department}@healthcare.com";
+            $doctorEmail = "doctor.{$departmentKey}@healthcare.com";
             $doctorUser = User::updateOrCreate(
                 ['email' => $doctorEmail],
                 [
-                    'name' => "Dr. {$department} Doctor",
+                    'name' => "Dr. {$departmentName} Doctor",
                     'password' => Hash::make('password'),
                 ]
             );
@@ -57,9 +74,9 @@ class StaffSeeder extends Seeder
                 ['email' => $doctorEmail],
                 [
                     'user_id' => $doctorUser->id,
-                    'name' => "Dr. {$department} Doctor",
-                    'role' => 'doctor',
-                    'department' => $department,
+                    'name' => "Dr. {$departmentName} Doctor",
+                    'department' => $department->name,
+                    'department_id' => $department->id,
                     'is_available' => true,
                 ]
             );
@@ -71,11 +88,11 @@ class StaffSeeder extends Seeder
             }
 
             // Coordinator
-            $coordinatorEmail = "coordinator.{$department}@healthcare.com";
+            $coordinatorEmail = "coordinator.{$departmentKey}@healthcare.com";
             $coordinatorUser = User::updateOrCreate(
                 ['email' => $coordinatorEmail],
                 [
-                    'name' => "{$department} Coordinator",
+                    'name' => "{$departmentName} Coordinator",
                     'password' => Hash::make('password'),
                 ]
             );
@@ -84,9 +101,9 @@ class StaffSeeder extends Seeder
                 ['email' => $coordinatorEmail],
                 [
                     'user_id' => $coordinatorUser->id,
-                    'name' => "{$department} Coordinator",
-                    'role' => 'coordinator',
-                    'department' => $department,
+                    'name' => "{$departmentName} Coordinator",
+                    'department' => $department->name,
+                    'department_id' => $department->id,
                     'is_available' => true,
                 ]
             );
