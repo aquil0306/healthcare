@@ -15,7 +15,6 @@ class Staff extends Model
         'user_id',
         'name',
         'email',
-        'role',
         'department', // Keep for backward compatibility
         'department_id',
         'is_available',
@@ -53,19 +52,43 @@ class Staff extends Model
         return $this->belongsTo(Department::class);
     }
 
+    /**
+     * Get the role from Spatie (first role assigned to user)
+     * This is an accessor that replaces the old 'role' column
+     */
+    public function getRoleAttribute(): ?string
+    {
+        if (!$this->relationLoaded('user')) {
+            $this->load('user.roles');
+        }
+        
+        if (!$this->user) {
+            return null;
+        }
+        
+        // Use the loaded relationship if available, otherwise query
+        if ($this->user->relationLoaded('roles')) {
+            $role = $this->user->roles->first();
+        } else {
+            $role = $this->user->roles()->first();
+        }
+        
+        return $role ? $role->name : null;
+    }
+
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->user && $this->user->hasRole('admin');
     }
 
     public function isDoctor(): bool
     {
-        return $this->role === 'doctor';
+        return $this->user && $this->user->hasRole('doctor');
     }
 
     public function isCoordinator(): bool
     {
-        return $this->role === 'coordinator';
+        return $this->user && $this->user->hasRole('coordinator');
     }
 
     public function canReceiveReferralForDepartment(string $department): bool

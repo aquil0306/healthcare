@@ -37,16 +37,16 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->staff?->role === 'admin';
+        return $this->hasRole('admin');
     }
 
     public function isDoctor(): bool
     {
-        return $this->staff?->role === 'doctor';
+        return $this->hasRole('doctor');
     }
 
     public function isCoordinator(): bool
     {
-        return $this->staff?->role === 'coordinator';
+        return $this->hasRole('coordinator');
     }
 }

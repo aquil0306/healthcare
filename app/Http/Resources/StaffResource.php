@@ -21,12 +21,24 @@ class StaffResource extends JsonResource
             'email' => $this->email,
             'role' => $this->role,
             'department' => $this->department,
+            'department_id' => $this->department_id,
             'is_available' => $this->is_available,
             'created_at' => $this->created_at->diffForHumans(),
             'created_at_raw' => $this->created_at->toIso8601String(),
             'updated_at' => $this->updated_at->diffForHumans(),
             'updated_at_raw' => $this->updated_at->toIso8601String(),
             'user' => $this->whenLoaded('user', fn () => new UserResource($this->user)),
+            'department_data' => $this->when(
+                $this->relationLoaded('department') && $this->getRelation('department') !== null,
+                function () {
+                    $department = $this->getRelation('department');
+                    return [
+                        'id' => $department->id,
+                        'name' => $department->name,
+                        'code' => $department->code,
+                    ];
+                }
+            ),
         ];
     }
 }

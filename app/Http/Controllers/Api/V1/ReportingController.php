@@ -134,9 +134,15 @@ class ReportingController extends Controller
             'suspended_hospitals' => Hospital::where('status', 'suspended')->count(),
             'total_patients' => Patient::count(),
             'total_staff' => Staff::count(),
-            'staff_by_role' => Staff::selectRaw('role, COUNT(*) as count')
-                ->groupBy('role')
-                ->get(),
+            'staff_by_role' => Staff::with('user.roles')
+                ->get()
+                ->groupBy(function ($staff) {
+                    return $staff->user?->roles->first()?->name ?? 'no-role';
+                })
+                ->map(function ($group, $roleName) {
+                    return ['role' => $roleName, 'count' => $group->count()];
+                })
+                ->values(),
             'available_staff' => Staff::where('is_available', true)->count(),
             'unavailable_staff' => Staff::where('is_available', false)->count(),
 

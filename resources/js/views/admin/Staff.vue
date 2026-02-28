@@ -45,12 +45,6 @@
                   </template>
                   <v-list-item-title>Edit</v-list-item-title>
                 </v-list-item>
-                <v-list-item v-if="item.user" @click="openRoleDialog(item)">
-                  <template v-slot:prepend>
-                    <v-icon>mdi-shield-account</v-icon>
-                  </template>
-                  <v-list-item-title>Assign Role</v-list-item-title>
-                </v-list-item>
                 <v-list-item @click="deleteStaff(item)">
                   <template v-slot:prepend>
                     <v-icon color="error">mdi-delete</v-icon>
@@ -90,11 +84,29 @@
               :rules="[rules.required]"
               required
             ></v-select>
-            <v-text-field
-              v-model="form.department"
+            <v-select
+              v-model="form.department_id"
               label="Department"
+              :items="departments"
+              item-title="name"
+              item-value="id"
               :disabled="form.role === 'admin'"
-            ></v-text-field>
+              clearable
+              :rules="form.role === 'admin' ? [] : []"
+              :loading="loadingDepartments"
+            >
+              <template v-slot:item="{ props, item }">
+                <v-list-item 
+                  v-bind="props"
+                  v-if="item && (item.raw || item)"
+                >
+                  <v-list-item-title>{{ (item.raw && item.raw.name) || item.name || 'Unknown' }}</v-list-item-title>
+                  <v-list-item-subtitle v-if="(item.raw && item.raw.code) || item.code">
+                    {{ (item.raw && item.raw.code) || item.code }}
+                  </v-list-item-subtitle>
+                </v-list-item>
+              </template>
+            </v-select>
             <v-text-field
               v-if="!editing"
               v-model="form.password"
@@ -124,27 +136,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- Assign Role Dialog -->
-    <v-dialog v-model="roleDialog" max-width="500">
-      <v-card>
-        <v-card-title>Assign Role</v-card-title>
-        <v-card-text>
-          <v-select
-            v-model="selectedRoleId"
-            label="Select Role"
-            :items="allRoles"
-            item-title="name"
-            item-value="id"
-            return-object
-          ></v-select>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="roleDialog = false">Cancel</v-btn>
-          <v-btn color="primary" @click="assignRole">Assign</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
@@ -153,19 +144,18 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
 const staff = ref([]);
-const allRoles = ref([]);
+const departments = ref([]);
 const loading = ref(false);
+const loadingDepartments = ref(false);
 const dialog = ref(false);
-const roleDialog = ref(false);
 const editing = ref(false);
-const selectedStaff = ref(null);
-const selectedRoleId = ref(null);
 const form = ref({
   id: null,
   name: '',
   email: '',
   role: 'doctor',
   department: '',
+  department_id: null,
   password: '',
   is_available: true,
 });
@@ -192,14 +182,20 @@ const resetForm = () => {
     email: '',
     role: 'doctor',
     department: '',
+    department_id: null,
     password: '',
     is_available: true,
   };
 };
 
-const openDialog = (staffMember = null) => {
+const openDialog = async (staffMember = null) => {
   // Reset form first
   resetForm();
+  
+  // Ensure departments are loaded before opening dialog
+  if (departments.value.length === 0) {
+    await loadDepartments();
+  }
   
   if (staffMember) {
     editing.value = true;
@@ -211,6 +207,7 @@ const openDialog = (staffMember = null) => {
       email: staffMember.email || '',
       role: staffMember.role || 'doctor',
       department: staffMember.department || '',
+      department_id: staffMember.department_id || staffMember.department_data?.id || null,
       password: '', // Never populate password
       is_available: staffMember.is_available !== undefined ? staffMember.is_available : true,
     });
@@ -237,6 +234,10 @@ const saveStaff = async () => {
     if (editing.value && !data.password) {
       delete data.password;
     }
+    // Remove department string if department_id is provided
+    if (data.department_id) {
+      delete data.department;
+    }
     if (editing.value) {
       await axios.put(`/api/v1/admin/staff/${data.id}`, data);
     } else {
@@ -261,44 +262,6 @@ const deleteStaff = async (staffMember) => {
   }
 };
 
-const openRoleDialog = (staffMember) => {
-  selectedStaff.value = staffMember;
-  selectedRoleId.value = null;
-  roleDialog.value = true;
-};
-
-const assignRole = async () => {
-  if (!selectedRoleId.value || !selectedStaff.value?.user) return;
-  try {
-    await axios.post(`/api/v1/admin/users/${selectedStaff.value.user.id}/assign-role`, {
-      role_id: selectedRoleId.value.id || selectedRoleId.value,
-    });
-    roleDialog.value = false;
-    loadStaff();
-  } catch (error) {
-    console.error('Failed to assign role:', error);
-    alert(error.response?.data?.message || 'Failed to assign role');
-  }
-};
-
-const loadRoles = async () => {
-  try {
-    const response = await axios.get('/api/v1/admin/roles', { params: { per_page: 1000 } });
-    // API Resource collection returns: { data: [...], success: true, links: {...}, meta: {...} }
-    if (response.data.data && Array.isArray(response.data.data)) {
-      allRoles.value = response.data.data;
-    } else if (response.data.data?.data && Array.isArray(response.data.data.data)) {
-      // Paginated response structure
-      allRoles.value = response.data.data.data;
-    } else {
-      allRoles.value = [];
-    }
-  } catch (error) {
-    console.error('Failed to load roles:', error);
-    allRoles.value = [];
-  }
-};
-
 const loadStaff = async () => {
   loading.value = true;
   try {
@@ -320,9 +283,28 @@ const loadStaff = async () => {
   }
 };
 
+const loadDepartments = async () => {
+  loadingDepartments.value = true;
+  try {
+    const response = await axios.get('/api/v1/admin/departments', { params: { per_page: 1000, is_active: true } });
+    if (response.data.data && Array.isArray(response.data.data)) {
+      departments.value = response.data.data;
+    } else if (response.data.data?.data && Array.isArray(response.data.data.data)) {
+      departments.value = response.data.data.data;
+    } else {
+      departments.value = [];
+    }
+  } catch (error) {
+    console.error('Failed to load departments:', error);
+    departments.value = [];
+  } finally {
+    loadingDepartments.value = false;
+  }
+};
+
 onMounted(() => {
   loadStaff();
-  loadRoles();
+  loadDepartments();
 });
 </script>
 
