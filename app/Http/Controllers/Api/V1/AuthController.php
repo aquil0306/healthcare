@@ -119,11 +119,32 @@ class AuthController extends Controller
 
         $token = $user->createToken('api-token')->plainTextToken;
 
+        // Load staff with user roles so the role accessor works
+        $user->load(['staff.user.roles']);
+
+        // Ensure staff has user relationship loaded for accessor
+        if ($user->staff) {
+            $user->staff->load('user.roles');
+        }
+
         return response()->json([
             'success' => true,
             'data' => [
                 'token' => $token,
-                'user' => $user->load('staff'),
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'staff' => $user->staff ? [
+                        'id' => $user->staff->id,
+                        'name' => $user->staff->name,
+                        'email' => $user->staff->email,
+                        'role' => $user->staff->role, // This will use the accessor
+                        'department' => $user->staff->department,
+                        'department_id' => $user->staff->department_id,
+                        'is_available' => $user->staff->is_available,
+                    ] : null,
+                ],
             ],
         ]);
     }
@@ -218,9 +239,37 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'data' => null,
+            ]);
+        }
+
+        // Load staff with user roles so the role accessor works
+        $user->load(['staff.user.roles']);
+
+        // Ensure staff has user relationship loaded for accessor
+        if ($user->staff) {
+            $user->staff->load('user.roles');
+        }
+
         return response()->json([
             'success' => true,
-            'data' => $user ? $user->load('staff') : null,
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'staff' => $user->staff ? [
+                    'id' => $user->staff->id,
+                    'name' => $user->staff->name,
+                    'email' => $user->staff->email,
+                    'role' => $user->staff->role, // This will use the accessor
+                    'department' => $user->staff->department,
+                    'department_id' => $user->staff->department_id,
+                    'is_available' => $user->staff->is_available,
+                ] : null,
+            ],
         ]);
     }
 }

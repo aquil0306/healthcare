@@ -32,6 +32,7 @@ class StaffResource extends JsonResource
                 $this->relationLoaded('department') && $this->getRelation('department') !== null,
                 function () {
                     $department = $this->getRelation('department');
+
                     return [
                         'id' => $department->id,
                         'name' => $department->name,

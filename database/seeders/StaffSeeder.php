@@ -55,8 +55,9 @@ class StaffSeeder extends Seeder
             $departmentName = $departmentMapping[$departmentKey] ?? ucfirst($departmentKey);
             $department = Department::where('name', $departmentName)->first();
 
-            if (!$department) {
+            if (! $department) {
                 $this->command->warn("Department '{$departmentName}' not found. Skipping staff creation for {$departmentKey}.");
+
                 continue;
             }
 

@@ -54,25 +54,25 @@ class Staff extends Model
 
     /**
      * Get the role from Spatie (first role assigned to user)
-     * This is an accessor that replaces the old 'role' column
+     * This accessor provides backward compatibility for code that uses $staff->role
      */
     public function getRoleAttribute(): ?string
     {
-        if (!$this->relationLoaded('user')) {
+        if (! $this->relationLoaded('user')) {
             $this->load('user.roles');
         }
-        
-        if (!$this->user) {
+
+        if (! $this->user) {
             return null;
         }
-        
+
         // Use the loaded relationship if available, otherwise query
         if ($this->user->relationLoaded('roles')) {
             $role = $this->user->roles->first();
         } else {
             $role = $this->user->roles()->first();
         }
-        
+
         return $role ? $role->name : null;
     }
 

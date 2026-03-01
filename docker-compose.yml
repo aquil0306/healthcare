@@ -8,6 +8,14 @@ services:
     container_name: healthcare_referral_app
     restart: unless-stopped
     working_dir: /var/www
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=healthcare_referral
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     volumes:
       - ./:/var/www
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
@@ -65,6 +73,14 @@ services:
     container_name: healthcare_referral_queue
     restart: unless-stopped
     working_dir: /var/www
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=healthcare_referral
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     command: php artisan queue:work --sleep=3 --tries=3
     volumes:
       - ./:/var/www
@@ -81,6 +97,14 @@ services:
     container_name: healthcare_referral_scheduler
     restart: unless-stopped
     working_dir: /var/www
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=healthcare_referral
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     command: >
       sh -c "while true; do
         php artisan schedule:run --verbose --no-interaction &

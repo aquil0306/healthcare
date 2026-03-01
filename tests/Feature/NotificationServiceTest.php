@@ -33,22 +33,19 @@ class NotificationServiceTest extends TestCase
         ]);
 
         // Create available cardiology doctor
-        $doctor = Staff::factory()->create([
-            'role' => 'doctor',
+        $doctor = Staff::factory()->doctor()->create([
             'department' => 'cardiology',
             'is_available' => true,
         ]);
 
         // Create unavailable doctor (should not be notified)
-        Staff::factory()->create([
-            'role' => 'doctor',
+        Staff::factory()->doctor()->create([
             'department' => 'cardiology',
             'is_available' => false,
         ]);
 
         // Create coordinator in different department (should not be notified)
-        Staff::factory()->create([
-            'role' => 'coordinator',
+        Staff::factory()->coordinator()->create([
             'department' => 'general',
             'is_available' => true,
         ]);
@@ -75,8 +72,7 @@ class NotificationServiceTest extends TestCase
         ]);
 
         // Create unavailable doctor
-        Staff::factory()->create([
-            'role' => 'doctor',
+        Staff::factory()->doctor()->create([
             'department' => 'cardiology',
             'is_available' => false,
         ]);
@@ -122,8 +118,7 @@ class NotificationServiceTest extends TestCase
             'department' => 'cardiology',
         ]);
 
-        $doctor = Staff::factory()->create([
-            'role' => 'doctor',
+        $doctor = Staff::factory()->doctor()->create([
             'department' => 'cardiology',
             'is_available' => true,
         ]);
@@ -141,8 +136,7 @@ class NotificationServiceTest extends TestCase
             'department' => 'cardiology',
         ]);
 
-        $doctor = Staff::factory()->create([
-            'role' => 'doctor',
+        $doctor = Staff::factory()->doctor()->create([
             'department' => 'cardiology',
             'is_available' => true,
         ]);
