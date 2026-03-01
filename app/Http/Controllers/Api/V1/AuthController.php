@@ -121,7 +121,7 @@ class AuthController extends Controller
 
         // Load staff with user roles so the role accessor works
         $user->load(['staff.user.roles']);
-        
+
         // Ensure staff has user relationship loaded for accessor
         if ($user->staff) {
             $user->staff->load('user.roles');
@@ -239,7 +239,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
                 'data' => null,
@@ -248,7 +248,7 @@ class AuthController extends Controller
 
         // Load staff with user roles so the role accessor works
         $user->load(['staff.user.roles']);
-        
+
         // Ensure staff has user relationship loaded for accessor
         if ($user->staff) {
             $user->staff->load('user.roles');

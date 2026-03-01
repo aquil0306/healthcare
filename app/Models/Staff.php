@@ -58,21 +58,21 @@ class Staff extends Model
      */
     public function getRoleAttribute(): ?string
     {
-        if (!$this->relationLoaded('user')) {
+        if (! $this->relationLoaded('user')) {
             $this->load('user.roles');
         }
-        
-        if (!$this->user) {
+
+        if (! $this->user) {
             return null;
         }
-        
+
         // Use the loaded relationship if available, otherwise query
         if ($this->user->relationLoaded('roles')) {
             $role = $this->user->roles->first();
         } else {
             $role = $this->user->roles()->first();
         }
-        
+
         return $role ? $role->name : null;
     }
 
