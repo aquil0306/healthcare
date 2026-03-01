@@ -29,7 +29,7 @@ class ReferralLifecycleTest extends TestCase
             'assigned_staff_id' => null,
         ]);
 
-        $staff = Staff::factory()->create();
+        $staff = Staff::factory()->doctor()->create();
         $oldStaffId = $referral->assigned_staff_id;
 
         $referral->update([
@@ -140,7 +140,7 @@ class ReferralLifecycleTest extends TestCase
 
     public function test_staff_can_acknowledge_referral(): void
     {
-        $staff = Staff::factory()->create();
+        $staff = Staff::factory()->doctor()->create();
         $referral = Referral::factory()->create([
             'status' => 'assigned',
             'assigned_staff_id' => $staff->id,

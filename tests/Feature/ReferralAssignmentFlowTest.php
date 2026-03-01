@@ -89,13 +89,12 @@ class ReferralAssignmentFlowTest extends TestCase
         ]);
 
         // Step 4: Create UNAVAILABLE staff member in cardiology department
-        $staff = Staff::factory()->create([
-            'role' => 'doctor',
+        $staff = Staff::factory()->doctor()->create([
             'department' => 'cardiology',
             'is_available' => false, // STAFF IS UNAVAILABLE
         ]);
-        $user = User::factory()->create();
-        $staff->update(['user_id' => $user->id]);
+        // Use the user that was created by the factory (it already has the doctor role)
+        $user = $staff->user;
 
         // Step 5: Mock AI response for triage and trigger triage
         $this->mockAiTriageResponse([
@@ -206,13 +205,12 @@ class ReferralAssignmentFlowTest extends TestCase
         ]);
 
         // Step 3: Create AVAILABLE staff member in neurology department
-        $staff = Staff::factory()->create([
-            'role' => 'doctor',
+        $staff = Staff::factory()->doctor()->create([
             'department' => 'neurology',
             'is_available' => true, // STAFF IS AVAILABLE
         ]);
-        $user = User::factory()->create();
-        $staff->update(['user_id' => $user->id]);
+        // Use the user that was created by the factory (it already has the doctor role)
+        $user = $staff->user;
 
         // Step 4: Mock AI response for triage and trigger triage
         $this->mockAiTriageResponse([
@@ -272,13 +270,12 @@ class ReferralAssignmentFlowTest extends TestCase
             'status' => 'assigned',
         ]);
 
-        $staff = Staff::factory()->create([
-            'role' => 'doctor',
+        $staff = Staff::factory()->doctor()->create([
             'department' => 'cardiology',
             'is_available' => false, // Initially unavailable
         ]);
-        $user = User::factory()->create();
-        $staff->update(['user_id' => $user->id]);
+        // Use the user that was created by the factory (it already has the doctor role)
+        $user = $staff->user;
 
         // Step 2: Queue notification (staff unavailable)
         $this->notificationService->notifyStaffOfAssignment($staff, $referral);
@@ -326,13 +323,12 @@ class ReferralAssignmentFlowTest extends TestCase
             'status' => 'assigned',
         ]);
 
-        $staff = Staff::factory()->create([
-            'role' => 'doctor',
+        $staff = Staff::factory()->doctor()->create([
             'department' => 'cardiology',
             'is_available' => true,
         ]);
-        $user = User::factory()->create();
-        $staff->update(['user_id' => $user->id]);
+        // Use the user that was created by the factory (it already has the doctor role)
+        $user = $staff->user;
 
         // Notify staff
         $this->notificationService->notifyStaffOfAssignment($staff, $referral);

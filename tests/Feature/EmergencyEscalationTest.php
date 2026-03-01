@@ -22,6 +22,8 @@ class EmergencyEscalationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        // Seed roles and permissions for tests
+        $this->artisan('db:seed', ['--class' => 'RolePermissionSeeder']);
         $this->escalationService = app(EscalationService::class);
         $this->referralRepository = app(ReferralRepository::class);
         Event::fake();

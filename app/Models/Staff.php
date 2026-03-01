@@ -54,7 +54,7 @@ class Staff extends Model
 
     /**
      * Get the role from Spatie (first role assigned to user)
-     * This is an accessor that replaces the old 'role' column
+     * This accessor provides backward compatibility for code that uses $staff->role
      */
     public function getRoleAttribute(): ?string
     {
